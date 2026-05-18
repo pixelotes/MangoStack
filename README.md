@@ -15,7 +15,7 @@ from a live deployment:
 
 ```
 CONTAINER                CPU %   MEM USAGE / LIMIT
-raspberry-media-server   0.00%   37.55 MiB / 128 MiB
+rms                      0.00%   37.55 MiB / 128 MiB
 reel                     0.00%   15.95 MiB /  64 MiB
 tango                    0.01%   25.92 MiB / 192 MiB
 suika                    0.00%   10.01 MiB / 192 MiB
