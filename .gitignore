@@ -1,0 +1,32 @@
+# Local environment
+.env
+.env.*
+!.env.example
+
+# Service runtime state (lives in CONFIG_DIR or BASE_DIR on the host)
+config/
+data/
+downloads/
+
+# Logs
+*.log
+*.log.*
+
+# OS / editor noise
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Python (janitorr)
+__pycache__/
+*.pyc
+*.pyo
+
+# Build artifacts
+*.tmp
+
+# Local scratch dir
+temp/

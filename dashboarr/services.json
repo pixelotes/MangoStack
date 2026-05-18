@@ -1,0 +1,25 @@
+[
+  {
+    "category": "Downloaders",
+    "services": [
+      { "name": "Tango", "url": "http://raspberrypi:7246", "icon": "💃", "description": "Torrent client" }
+    ]
+  },
+  {
+    "category": "Media Management",
+    "services": [
+      { "name": "Reel", "url": "http://raspberrypi:8081", "icon": "🚀", "description": "Media downloader" },
+      { "name": "Scarf", "url": "http://raspberrypi:8080", "icon": "🧣", "description": "Indexer proxy for torrents" },
+      { "name": "Trakt Movies List", "url": "https://trakt.tv/users/YOUR_USERNAME/lists/movies?sort=rank,asc", "icon": "🎬", "description": "Movie watchlist" },
+      { "name": "Trakt Series List", "url": "https://trakt.tv/users/YOUR_USERNAME/lists/series?sort=rank,asc", "icon": "📺", "description": "Series watchlist" }
+    ]
+  },
+  {
+    "category": "Media Server",
+    "services": [
+      { "name": "RMS", "url": "http://raspberrypi:8096", "icon": "🍿", "description": "Stream your media" },
+      { "name": "Navidrome", "url": "http://raspberrypi:4533", "icon": "🎵", "description": "Music server" },
+      { "name": "Suika", "url": "http://raspberrypi:8083", "icon": "🍉", "description": "Manga reader" }
+    ]
+  }
+]

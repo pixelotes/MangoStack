@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboarr</title>
+  <style>
+    :root {
+      --bg-color: #121212;
+      --text-color: #f0f0f0;
+      --card-color: #1e1e1e;
+      --accent-color: #61dafb;
+    }
+
+    [data-theme="light"] {
+      --bg-color: #f0f0f0;
+      --text-color: #121212;
+      --card-color: #ffffff;
+      --accent-color: #007acc;
+    }
+
+    body {
+      margin: 0;
+      font-family: system-ui, sans-serif;
+      background-color: var(--bg-color);
+      background-image: url('https://images.unsplash.com/photo-1503264116251-35a269479413?auto=format&fit=crop&w=1950&q=80');
+      background-size: cover;
+      background-position: center;
+      background-attachment: fixed;
+      color: var(--text-color);
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    header {
+      background-color: var(--card-color);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+      gap: 1rem;
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 1.25rem;
+    }
+
+    #datetime, #weather {
+      font-size: 0.9rem;
+    }
+
+    .header-right {
+      display: flex;
+      gap: 0.5rem;
+      align-items: center;
+    }
+
+    .theme-toggle {
+      cursor: pointer;
+      font-size: 1rem;
+      border: none;
+      background: none;
+      color: var(--text-color);
+    }
+
+    main {
+      padding: 1rem;
+    }
+
+    .category-section {
+      margin-bottom: 2rem;
+    }
+
+    .category-section h2 {
+      color: var(--text-color);
+      margin-bottom: 1rem;
+      font-size: 1.3rem;
+      border-bottom: 2px solid var(--accent-color);
+      padding-bottom: 0.5rem;
+    }
+
+    .services-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1rem;
+      max-width: 100%;
+    }
+
+    @media (min-width: 900px) {
+      .services-grid {
+        grid-template-columns: repeat(3, 1fr);
+        max-width: none;
+      }
+    }
+
+    .card {
+      background-color: var(--card-color);
+      padding: 1rem;
+      border-radius: 12px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+      text-align: center;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 12px rgba(0,0,0,0.2);
+    }
+
+    .card a {
+      color: var(--accent-color);
+      text-decoration: none;
+      font-size: 1.1rem;
+      display: block;
+      margin-bottom: 0.5rem;
+    }
+
+    .card a:hover {
+      text-decoration: underline;
+    }
+
+    .card p {
+      margin: 0;
+      font-size: 0.85rem;
+      color: var(--text-color);
+      opacity: 0.8;
+    }
+
+    .error-message {
+      text-align: center;
+      font-size: 1.1rem;
+      color: var(--text-color);
+      padding: 2rem;
+      background-color: var(--card-color);
+      border-radius: 12px;
+      margin: 1rem;
+    }
+  </style>
+</head>
+<body data-theme="dark">
+  <header>
+    <h1>📺 Pi Dashboarr</h1>
+    <div class="header-right">
+      <span id="datetime"></span> | <span id="weather">Loading weather...</span>
+      <button class="theme-toggle" onclick="toggleTheme()">🌓</button>
+    </div>
+  </header>
+
+  <main id="services"></main>
+
+  <script>
+    function toggleTheme() {
+      const current = document.body.getAttribute('data-theme');
+      document.body.setAttribute('data-theme', current === 'dark' ? 'light' : 'dark');
+    }
+
+    function updateDateTime() {
+      const now = new Date();
+      document.getElementById('datetime').textContent = now.toLocaleString();
+    }
+
+    async function updateWeather() {
+      try {
+        const res = await fetch('https://wttr.in/Valencia?format=%t');
+        const temp = await res.text();
+        document.getElementById('weather').textContent = `🌡️ ${temp.trim()}`;
+      } catch (err) {
+        document.getElementById('weather').textContent = '🌡️ N/A';
+      }
+    }
+
+    async function loadServices() {
+      try {
+        console.log('Fetching services.json...');
+        const res = await fetch('./services.json');
+        
+        if (!res.ok) {
+          throw new Error(`HTTP error ${res.status}: ${res.statusText}`);
+        }
+
+        const contentType = res.headers.get('content-type');
+        console.log('Content-Type:', contentType);
+        
+        const text = await res.text();
+        console.log('Raw response:', text);
+        
+        let data;
+        try {
+          data = JSON.parse(text);
+        } catch (parseErr) {
+          throw new Error(`JSON parse error: ${parseErr.message}`);
+        }
+
+        console.log('Parsed data:', data);
+        console.log('Data type:', typeof data);
+        console.log('Is array:', Array.isArray(data));
+
+        const container = document.getElementById('services');
+        container.innerHTML = '';
+
+        // Check if data is an array
+        if (!Array.isArray(data)) {
+          throw new Error(`Expected array but got ${typeof data}`);
+        }
+
+        // Process each group
+        for (let i = 0; i < data.length; i++) {
+          const group = data[i];
+          console.log(`Processing group ${i}:`, group);
+          
+          if (!group || typeof group !== 'object') {
+            console.warn(`Skipping invalid group at index ${i}:`, group);
+            continue;
+          }
+
+          if (!Array.isArray(group.services)) {
+            console.warn(`Group at index ${i} has invalid services (not an array):`, group);
+            continue;
+          }
+
+          // Create section for this category
+          const section = document.createElement('div');
+          section.className = 'category-section';
+
+          const heading = document.createElement('h2');
+          heading.textContent = group.category || 'Uncategorized';
+          section.appendChild(heading);
+
+          const grid = document.createElement('div');
+          grid.className = 'services-grid';
+
+          // Add services to grid
+          for (const svc of group.services) {
+            if (!svc || typeof svc !== 'object' || !svc.name || !svc.url) {
+              console.warn('Skipping invalid service:', svc);
+              continue;
+            }
+
+            const card = document.createElement('div');
+            card.className = 'card';
+            
+            const link = document.createElement('a');
+            link.href = svc.url;
+            link.target = '_blank';
+            link.textContent = `${svc.icon || '🔗'} ${svc.name}`;
+            
+            const description = document.createElement('p');
+            description.textContent = svc.description || '';
+            
+            card.appendChild(link);
+            card.appendChild(description);
+            grid.appendChild(card);
+          }
+
+          section.appendChild(grid);
+          container.appendChild(section);
+        }
+
+        if (container.children.length === 0) {
+          container.innerHTML = '<div class="error-message">No valid services found</div>';
+        }
+
+      } catch (err) {
+        console.error('Error loading services:', err);
+        const container = document.getElementById('services');
+        container.innerHTML = `<div class="error-message">❌ Couldn't load services<br><small>${err.message}</small></div>`;
+      }
+    }
+
+    // Initialize
+    updateDateTime();
+    updateWeather();
+    loadServices();
+    setInterval(updateDateTime, 1000 * 60);
+    setInterval(updateWeather, 1000 * 60 * 30);
+  </script>
+</body>
+</html>
