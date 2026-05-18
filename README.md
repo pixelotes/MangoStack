@@ -50,7 +50,7 @@ The threat model of every service in this repo assumes a trusted LAN.
 | **Tango**     | Web UI and friendlier REST API around `aria2c`; adds automatic tracker injection and per-torrent download paths on top of aria2's JSON-RPC endpoint — very small footprint | qBittorrent, Transmission, Deluge | [pixelotes/tango](https://github.com/pixelotes/tango) |
 | **Scarf**     | Indexer proxy / aggregator         | Prowlarr, Jackett                     | [pixelotes/scarf](https://github.com/pixelotes/scarf) |
 | **Reel**      | Movie & TV automator with a configurable post-download pipeline (metadata, posters, subtitles, renaming…) | Sonarr + Radarr + Lidarr + Readarr, Flexget | [pixelotes/reel](https://github.com/pixelotes/reel) |
-| **RMS**       | Raspberry Media Server — lightweight media server with built-in subtitle support; ships its own web client and speaks enough of the Jellyfin API to be used from [Streamyfin](https://streamyfin.app/) | Jellyfin, Emby, Plex | [pixelotes/rms](https://github.com/pixelotes/rms) |
+| **RMS**       | Raspberry Media Server — lightweight media server with built-in subtitle support; ships its own web client and speaks enough of the Jellyfin API to be used from the official [Jellyfin clients](https://jellyfin.org/clients/), [Streamyfin](https://streamyfin.app/) or the [Jellyfin for Kodi](https://github.com/jellyfin/jellyfin-kodi) plugin | Jellyfin, Emby, Plex | [pixelotes/rms](https://github.com/pixelotes/rms) |
 | **Suika**     | Manga reader                       | Komga, Kavita                         | [pixelotes/suika](https://github.com/pixelotes/suika) |
 | Navidrome     | Music streaming                    | Subsonic, Airsonic                    | upstream `deluan/navidrome` |
 
