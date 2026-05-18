@@ -8,6 +8,40 @@ plus a tiny homepage.
 If you have ever looked at the *arr stack and thought "this is too much for
 my Pi", MangoStack is the lightweight alternative I run on mine.
 
+## Why MangoStack
+
+The whole stack runs comfortably on a Raspberry Pi 3B. Real `docker stats`
+from a live deployment:
+
+```
+CONTAINER                CPU %   MEM USAGE / LIMIT
+raspberry-media-server   0.00%   37.55 MiB / 128 MiB
+reel                     0.00%   15.95 MiB /  64 MiB
+tango                    0.01%   25.92 MiB / 192 MiB
+suika                    0.00%   10.01 MiB / 192 MiB
+scarf                    0.00%   10.76 MiB /  64 MiB
+dashboarr                0.00%    1.55 MiB /   8 MiB
+                                 ────────
+                                 ~102 MiB total RSS, idle CPU
+```
+
+For comparison, a typical Sonarr + Radarr + Prowlarr + Jellyfin install on
+the same hardware easily uses an order of magnitude more memory and is
+noticeably slower at every interaction.
+
+## What it isn't
+
+These services are built for *efficiency*, not for being a hardened public
+endpoint. **Do not expose any of them directly to the internet.** If you
+need to reach the stack from outside your LAN, put it behind a private
+overlay or tunnel:
+
+- [Tailscale](https://tailscale.com/) — easiest, zero-config WireGuard mesh
+- Plain [WireGuard](https://www.wireguard.com/) — if you prefer to run your own
+- An SSH tunnel or a reverse proxy with authentication, on a network you trust
+
+The threat model of every service in this repo assumes a trusted LAN.
+
 ## What is in the stack
 
 | Service       | Role                              | Equivalent to                          | Project |
