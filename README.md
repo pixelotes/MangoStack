@@ -47,7 +47,7 @@ The threat model of every service in this repo assumes a trusted LAN.
 | Service       | Role                              | Equivalent to                          | Project |
 |---------------|-----------------------------------|----------------------------------------|---------|
 | **Dashboarr** | Static homepage with service tiles | Homepage, Homarr, Heimdall            | [pixelotes/dashboarr](https://github.com/pixelotes/dashboarr); link list lives in [`./dashboarr/services.json`](dashboarr/services.json) |
-| **Tango**     | Web-UI wrapper around `aria2c` — very small footprint | qBittorrent, Transmission, Deluge     | [pixelotes/tango](https://github.com/pixelotes/tango) |
+| **Tango**     | Web UI and friendlier REST API around `aria2c`; adds automatic tracker injection and per-torrent download paths on top of aria2's JSON-RPC endpoint — very small footprint | qBittorrent, Transmission, Deluge | [pixelotes/tango](https://github.com/pixelotes/tango) |
 | **Scarf**     | Indexer proxy / aggregator         | Prowlarr, Jackett                     | [pixelotes/scarf](https://github.com/pixelotes/scarf) |
 | **Reel**      | Movie & TV automator with a configurable post-download pipeline (metadata, posters, subtitles, renaming…) | Sonarr + Radarr + Lidarr + Readarr, Flexget | [pixelotes/reel](https://github.com/pixelotes/reel) |
 | **RMS**       | Raspberry Media Server — lightweight media server with built-in subtitle support; ships its own web client and speaks enough of the Jellyfin API to be used from [Streamyfin](https://streamyfin.app/) | Jellyfin, Emby, Plex | [pixelotes/rms](https://github.com/pixelotes/rms) |
