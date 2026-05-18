@@ -3,35 +3,10 @@ services:
   ##############
   # MEDIA SERVER
   ##############
-  # Note: jellyfin and rms both expose host port 8096 by default. Pick one,
-  # or change the host-side mapping on the other before bringing the stack up.
-
-  jellyfin:
-    image: lscr.io/linuxserver/jellyfin:latest
-    container_name: jellyfin
-    restart: unless-stopped
-    deploy:
-      resources:
-        limits:
-          cpus: "1"
-          memory: 400m
-        reservations:
-          cpus: "0.5"
-          memory: 256m
-    cpuset: "1"
-    environment:
-      - "PUID=${PUID}"
-      - "PGID=${PGID}"
-      - "TZ=${TZ}"
-    volumes:
-      - "${CONFIG_DIR}/jellyfin:/config"
-      - "${MEDIA_DIR}:/MediaCenterBox"
-    ports:
-      - "8096:8096"
 
   rms:
     image: pixelotes/rms:arm64
-    container_name: raspberry-media-server
+    container_name: rms
     restart: unless-stopped
     ports:
       - "8096:8082"
@@ -41,7 +16,7 @@ services:
       - "TZ=${TZ}"
     volumes:
       - "${MEDIA_DIR}:/app/media"
-      - "${CONFIG_DIR}/rms/config:/app/config"
+      - "./rms/config:/app/config"
     deploy:
       resources:
         limits:
@@ -54,8 +29,7 @@ services:
   ###########
 
   dashboarr:
-    build:
-      context: ./dashboarr
+    image: pixelotes/dashboarr:arm64
     container_name: dashboarr
     ports:
       - "3000:80"
@@ -81,8 +55,8 @@ services:
       - "7246:7246"
       - "6881:6881"
     volumes:
-      - "${CONFIG_DIR}/tango/config.yaml:/tango/config.yaml"
-      - "${CONFIG_DIR}/tango/session:/tango/session"
+      - "./tango/config.yaml:/tango/config.yaml"
+      - "./tango/session:/tango/session"
       - "${BASE_DIR}:/storage"
     environment:
       - "PUID=${PUID}"
@@ -106,8 +80,8 @@ services:
     ports:
       - "8080:8080"
     volumes:
-      - "${CONFIG_DIR}/scarf/data:/app/data"
-      - "${CONFIG_DIR}/scarf/definitions:/app/definitions"
+      - "./scarf/data:/app/data"
+      - "./scarf/definitions:/app/definitions"
     environment:
       - "PUID=${PUID}"
       - "PGID=${PGID}"
@@ -117,7 +91,6 @@ services:
       - "DB_PATH=/app/data/indexer-cache.db"
       - "UI_PASSWORD=${SCARF_UI_PASSWORD}"
       - "SKIP_TLS_VERIFY=true"
-      - "FLEXGET_API_KEY=${SCARF_FLEXGET_API_KEY:-}"
       - "JWT_SECRET=${SCARF_JWT_SECRET}"
       - "DEFAULT_API_LIMIT=300"
       - "CACHE_TTL=30m"
@@ -144,8 +117,8 @@ services:
     ports:
       - "8081:8081"
     volumes:
-      - "${CONFIG_DIR}/reel/config:/app/config"
-      - "${CONFIG_DIR}/reel/data:/app/data"
+      - "./reel/config:/app/config"
+      - "./reel/data:/app/data"
       - "${BASE_DIR}:/storage"
     environment:
       - "TZ=${TZ}"
@@ -176,7 +149,7 @@ services:
       - "ND_LOGLEVEL=info"
       - "ND_BASEURL="
     volumes:
-      - "${CONFIG_DIR}/navidrome:/data"
+      - "./navidrome:/data"
       - "${MEDIA_DIR}/Music:/music:ro"
     deploy:
       resources:
@@ -200,7 +173,7 @@ services:
       - "PGID=${PGID}"
       - "TZ=${TZ}"
     volumes:
-      - "${CONFIG_DIR}/suika/config:/app/config"
+      - "./suika/config:/app/config"
       - "${MEDIA_DIR}/Manga:/app/media:ro"
     deploy:
       resources:

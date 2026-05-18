@@ -1,0 +1,168 @@
+# Reel config — copy to ${CONFIG_DIR}/reel/config/config.yml on the host.
+# Paths starting with /storage live on the host's BASE_DIR.
+# Reference: https://github.com/pixelotes/reel
+
+app:
+  port: 8081
+  data_path: "./data"
+  ui_enabled: true
+  ui_password: "REPLACE_WITH_STRONG_PASSWORD"
+  debug: false
+  jwt_secret: "REPLACE_WITH_LONG_RANDOM_STRING"   # openssl rand -hex 48
+  magnet_to_torrent_enabled: false
+  magnet_to_torrent_timeout: 60
+  search_timeout: 60
+  filter_log_level: "detail"
+
+# Talks to the Tango service on the internal Docker network.
+torrent_client:
+  type: "storm"
+  host: "http://tango:7246"
+  username: ""
+  password: ""
+  secret: ""
+  download_path: "/storage/Downloads/complete"
+
+notifications:
+  pushbullet:
+    api_key: "REPLACE_WITH_PUSHBULLET_TOKEN_OR_LEAVE_EMPTY"
+
+extra_trackers_list:
+  - udp://tracker.opentrackr.org:1337/announce
+  - udp://open.demonii.com:1337/announce
+  - udp://open.stealth.si:80/announce
+  - udp://exodus.desync.com:6969/announce
+  - udp://tracker.srv00.com:6969/announce
+  - udp://explodie.org:6969/announce
+  - udp://wepzone.net:6969/announce
+  - udp://udp.tracker.projectk.org:23333/announce
+  - udp://ttk2.nbaonlineservice.com:6969/announce
+  - udp://tracker2.dler.org:80/announce
+  - udp://tracker.zupix.online:6969/announce
+  - udp://tracker.wepzone.net:6969/announce
+  - udp://tracker.tryhackx.org:6969/announce
+  - udp://tracker.therarbg.to:6969/announce
+  - udp://tracker.skillindia.site:6969/announce
+  - udp://tracker.qu.ax:6969/announce
+  - udp://tracker.plx.im:6969/announce
+  - udp://tracker.ololosh.space:6969/announce
+  - udp://tracker.kmzs123.cn:17272/announce
+  - udp://tracker.hifitechindia.com:6969/announce
+
+metadata:
+  providers: ["tmdb", "imdb"]
+  timeout: 10
+  language: "en"
+  tmdb:
+    api_key: "REPLACE_WITH_TMDB_API_KEY"
+  imdb:
+    api_key: ""
+  tvmaze:
+    api_key: ""
+  anilist: {}
+  trakt:
+    client_id: "REPLACE_WITH_TRAKT_CLIENT_ID"
+  google_books:
+    api_key: ""
+
+movies:
+  providers: ["tmdb", "imdb"]
+  download_folder: "/storage/Downloads/Movies"
+  destination_folder: "/storage/Completed/Movies"
+  move_method: ["hardlink", "symlink", "move", "copy"]
+  sources:
+    - type: "scarf"
+      url: "http://scarf:8080/torznab/all"
+      api_key: "REPLACE_WITH_SCARF_API_KEY"
+      search_mode: movie-search
+
+tv-shows:
+  providers: ["tvmaze"]
+  download_folder: "/storage/Downloads/Series"
+  destination_folder: "/storage/Completed/TV"
+  move_method: ["hardlink", "symlink", "move", "copy"]
+  sources:
+    # Optional: a personal RSS feed from episodefeed.com or similar.
+    # - type: "rss"
+    #   url: "https://example.com/your-private-rss"
+    - type: "scarf"
+      url: "http://scarf:8080/torznab/all"
+      api_key: "REPLACE_WITH_SCARF_API_KEY"
+      search_mode: search
+
+anime:
+  providers: ["tvmaze", "trakt"]
+  download_folder: "/storage/Downloads/Anime"
+  destination_folder: "/storage/Completed/Anime"
+  move_method: ["hardlink", "symlink", "move", "copy"]
+  sources:
+    - type: "scarf"
+      url: "http://scarf:8080/torznab/all"
+      api_key: "REPLACE_WITH_SCARF_API_KEY"
+      search_mode: tv-search
+
+ebooks:
+  providers: ["gutendex"]
+  download_folder: "/storage/Downloads/Ebooks"
+  destination_folder: "/storage/Completed/Ebooks"
+  move_method: ["move", "copy"]
+  sources:
+    - type: "gutendex"
+      url: "https://gutendex.com"
+
+manga:
+  providers: ["mangadex"]
+  download_folder: "/storage/Downloads/Manga"
+  destination_folder: "/storage/Completed/Manga"
+  move_method: ["move", "copy"]
+  languages: ["en", "es"]
+
+file_renaming:
+  movie_template: "{title} ({year}) [{quality}]"
+  series_template: "{title} - S{season}E{episode} [{quality}]"
+  anime_template: "{title} - {season}x{episode} [{quality}]"
+  ebook_template: "{title} ({year})"
+  manga_template: "{title} - S{season}E{episode}"
+
+database:
+  path: "./data/reel.db"
+
+postprocessing:
+  enabled: true
+  validate_files: true
+  min_file_size_mb: 1
+  wait_for_file_timeout: 30
+  retry_attempts: 3
+  retry_delay: 5
+  cleanup_on_failure: true
+  pipeline:
+    enabled: true
+    rollback: true
+
+automation:
+  search_interval: "1h"
+  episode_download_delay_hours: 8
+  max_concurrent_downloads: 3
+  quality_preferences:
+    - "1080p"
+    - "720p"
+  min_seeders: 5
+  keep_torrents_for_days: 7
+  keep_torrents_seed_ratio: 1.0
+  notifications: ["pushbullet"]
+  reject-common:
+    - \bhdcam?\b
+    - \btelecine\b
+    - \bscreener\b
+    - \b3d\b
+    - \bfre(nch)?\b
+    - \bita(lian)?\b
+    - \bcat(alan)?\b
+    - \bger(man)?\b
+    - \brus(sian)?\b
+    - \bvostfr\b
+
+subtitles:
+  enabled: true
+  api_key: "REPLACE_WITH_OPENSUBTITLES_API_KEY"
+  languages: ["en", "es"]

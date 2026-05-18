@@ -1,0 +1,79 @@
+# RMS (Raspberry Media Server) config — copy to ${CONFIG_DIR}/rms/config/config.yml on the host.
+# Paths are relative to the container's working directory; /app/media is where
+# the host's MEDIA_DIR is mounted. Reference: pixelotes/rms on Docker Hub.
+
+app:
+  port: 8082
+  ui_enabled: true
+  ui_password: "REPLACE_WITH_STRONG_PASSWORD"
+  jwt_secret: "REPLACE_WITH_LONG_RANDOM_STRING"   # openssl rand -hex 48
+  jellyfin_version: "10.11.0"
+  kodi_sync_queue: true
+  debug: false
+
+player:
+  # Strategies tried in order when playing video. Remove "transcode" on low-power devices.
+  stream_strategy: ["direct", "remux", "transcode"]
+
+libraries:
+  - friendly_name: "Anime"
+    path: "./media/Anime"
+    metadata_lang: en
+    download_metadata: true
+    download_subtitles: true
+    content_type: anime
+    providers: ["kitsu", "anilist", "tmdb"]
+  - friendly_name: "Anime Movies"
+    path: "./media/Anime_Movies"
+    metadata_lang: en
+    download_metadata: true
+    download_subtitles: true
+    content_type: movies
+    providers: ["kitsu", "anilist", "tmdb"]
+  - friendly_name: "Movies"
+    path: "./media/Movies"
+    metadata_lang: en
+    download_metadata: true
+    download_subtitles: true
+    content_type: movies
+    providers: ["tmdb", "tvmaze"]
+  - friendly_name: "Shows"
+    path: "./media/TV"
+    metadata_lang: en
+    download_metadata: true
+    download_subtitles: true
+    content_type: tvseries
+    providers: ["tvmaze", "tmdb"]
+  - friendly_name: "YouTube"
+    path: "./media/Youtube"
+    metadata_lang: en
+    download_metadata: false
+    download_subtitles: false
+    content_type: tvseries
+
+# Optional: per-user library access. If omitted, a single account using
+# app.ui_password is created with access to every library.
+users:
+  - username: "alice"
+    password: "REPLACE_WITH_STRONG_PASSWORD"
+    libraries: ["Movies", "Shows", "Anime", "Anime Movies", "YouTube"]
+  - username: "bob"
+    password: "REPLACE_WITH_STRONG_PASSWORD"
+    libraries: ["Movies", "Shows"]
+
+crawlers:
+  subtitles:
+    api_key: "REPLACE_WITH_OPENSUBTITLES_API_KEY"
+    languages: ["en", "es"]
+  metadata:
+    tmdb_api_key: "REPLACE_WITH_TMDB_API_KEY"
+    anime_providers: ["kitsu", "anilist", "tmdb"]
+    movie_providers: ["tmdb"]
+    tvseries_providers: ["tvmaze"]
+  # Periodic auto-scan: fills in missing metadata, subtitles and thumbnails.
+  auto_scan:
+    enabled: true
+    schedule: "03:00"
+    metadata: true
+    subtitles: true
+    thumbnails: true

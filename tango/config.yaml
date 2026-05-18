@@ -1,0 +1,34 @@
+# Tango config — copy to ${CONFIG_DIR}/tango/config.yaml on the host.
+# Tuned for a Raspberry Pi 3B (1 GB RAM). Bump max_concurrent and disk_cache
+# on more capable hardware. Reference: https://github.com/pixelotes/tango
+
+host: "0.0.0.0"
+port: 7246
+data_dir: "/storage"
+database_path: "/tango/session/tango.db"
+webui_enabled: true
+
+aria2:
+  rpc_url: "http://127.0.0.1:6800/jsonrpc"
+  rpc_secret: ""
+  bin_path: "/usr/bin/aria2c"
+  listen_port: 6881
+  max_concurrent: 3
+  max_connection_per_server: 4
+  dht_enabled: true
+  pex_enabled: true
+  max_upload_speed: 0
+  max_download_speed: 0
+  disk_cache: 8388608       # 8 MiB
+
+trackers:
+  auto_add: true
+  list_url: "https://raw.githubusercontent.com/ngosang/trackerslist/master/trackers_all.txt"
+  update_interval: "168h"
+
+seeding:
+  target_ratio: 1.5
+  max_seed_time_minutes: 0
+  check_interval_seconds: 30
+  auto_remove: false
+  auto_delete_data: false

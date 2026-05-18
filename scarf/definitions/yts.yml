@@ -1,0 +1,51 @@
+key: "yts"
+name: "YTS"
+rate_limit: 2s
+description: "YTS is a Public torrent site specialising in HD movies of small size"
+type: "public"
+enabled: "false"
+language: "en-US"
+schedule: "@every 2h"
+settings:
+  - name: use_flaresolverr
+    type: checkbox
+    label: Use FlareSolverr
+    default: 'false'
+search:
+  type: "json"
+  urls:
+    - "https://yts.mx/api/v2/list_movies.json"
+  params:
+    query_term: "{{.Query}}"
+    limit: 50
+    sort_by: "date_added"
+    order_by: "desc"
+    quality: "{{.Category}}"
+  results:
+    path: "data.movies"
+    sub_path: "torrents"
+    fields:
+      title:
+        selector: "{{.Parent.title_long}} [{{.Result.quality}}] [{{if eq .Result.type \"web\"}}WEBRip{{else}}BluRay{{end}}]"
+      download_url:
+        selector: "magnet:?xt=urn:btih:{{.Result.hash}}&dn={{.Parent.title_long}}"
+      size:
+        selector: "size_bytes"
+      seeders:
+        selector: "seeds"
+      leechers:
+        selector: "peers"
+      publish_date:
+        selector: "date_uploaded_unix"
+  modes:
+    search: [q]
+    movie-search: [q, imdbid]
+category_mappings:
+  - indexer_cat: "720p"
+    torznab_cat: 2040
+  - indexer_cat: "1080p"
+    torznab_cat: 2040
+  - indexer_cat: "2160p"
+    torznab_cat: 2050
+  - indexer_cat: "3D"
+    torznab_cat: 2060

@@ -3,10 +3,17 @@
 .env.*
 !.env.example
 
-# Service runtime state (lives in CONFIG_DIR or BASE_DIR on the host)
-config/
-data/
-downloads/
+# Per-service runtime state — bind-mounted into containers and grows on use.
+# Each block keeps the tracked config and ignores everything else.
+tango/session/
+tango/data/
+reel/data/
+rms/config/*
+!rms/config/config.yml
+suika/config/*
+!suika/config/config.yml
+scarf/data/
+navidrome/
 
 # Logs
 *.log
@@ -19,11 +26,6 @@ Thumbs.db
 .vscode/
 *.swp
 *.swo
-
-# Python (janitorr)
-__pycache__/
-*.pyc
-*.pyo
 
 # Build artifacts
 *.tmp

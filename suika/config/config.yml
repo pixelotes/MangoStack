@@ -1,0 +1,11 @@
+# Suika config — copy to ${CONFIG_DIR}/suika/config/config.yml on the host.
+# Reference: pixelotes/suika on Docker Hub.
+
+app:
+  port: 8080
+  ui_password: "REPLACE_WITH_STRONG_PASSWORD"
+  jwt_secret: "REPLACE_WITH_LONG_RANDOM_STRING"   # openssl rand -hex 48
+
+libraries:
+  - friendly_name: "Manga"
+    path: "/app/media"

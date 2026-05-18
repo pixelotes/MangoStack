@@ -1,0 +1,59 @@
+key: "therarbg"
+name: "TheRARBG"
+rate_limit: 2s
+description: "A Public site inspired by RARBG.to for MOVIES / TV / GENERAL"
+type: "public"
+enabled: "false"
+language: "en-US"
+schedule: "@every 1h"
+settings:
+  - name: use_flaresolverr
+    type: checkbox
+    label: Use FlareSolverr
+    default: 'false'
+search:
+  type: "json"
+  urls:
+    - "https://therarbg.to/get-posts/order:-a{{if .Category}}:category:{{.Category}}{{end}}{{if .Query}}:keywords:{{.Query}}{{else}}:time:10D{{end}}:paginate_by:100:format:json/"
+  results:
+    path: "results"
+    fields:
+      title:
+        selector: "n"
+      size:
+        selector: "s"
+      seeders:
+        selector: "se"
+      leechers:
+        selector: "le"
+      publish_date:
+        selector: "a"
+      download_url:
+        selector: "magnet:?xt=urn:btih:{{.Result.h}}&dn={{.Result.n}}"
+  modes:
+    search: [q]
+    tv-search: [q, season, ep]
+    movie-search: [q, imdbid]
+    music-search: [q]
+    book-search: [q]
+category_mappings:
+  - indexer_cat: "Movies"
+    torznab_cat: 2000
+  - indexer_cat: "TV"
+    torznab_cat: 5000
+  - indexer_cat: "Games"
+    torznab_cat: 4050
+  - indexer_cat: "Music"
+    torznab_cat: 3000
+  - indexer_cat: "Anime"
+    torznab_cat: 5080
+  - indexer_cat: "Documentaries"
+    torznab_cat: 2020
+  - indexer_cat: "Apps"
+    torznab_cat: 4000
+  - indexer_cat: "Other"
+    torznab_cat: 8000
+  - indexer_cat: "Books"
+    torznab_cat: 7000
+  - indexer_cat: "XXX"
+    torznab_cat: 6000
