@@ -7,6 +7,7 @@ services:
   rms:
     image: pixelotes/rms:arm64
     container_name: rms
+    profiles: ["rms"]
     restart: unless-stopped
     ports:
       - "8096:8082"
@@ -31,6 +32,7 @@ services:
   dashboarr:
     image: pixelotes/dashboarr:arm64
     container_name: dashboarr
+    profiles: ["dashboarr"]
     ports:
       - "3000:80"
     volumes:
@@ -50,6 +52,7 @@ services:
   tango:
     image: pixelotes/tango:arm64
     container_name: tango
+    profiles: ["tango"]
     restart: unless-stopped
     ports:
       - "7246:7246"
@@ -77,6 +80,7 @@ services:
   scarf:
     image: pixelotes/scarf:arm64
     container_name: scarf
+    profiles: ["scarf"]
     ports:
       - "8080:8080"
     volumes:
@@ -113,6 +117,7 @@ services:
   reel:
     image: pixelotes/reel:arm64
     container_name: reel
+    profiles: ["reel"]
     restart: unless-stopped
     ports:
       - "8081:8081"
@@ -138,6 +143,7 @@ services:
   navidrome:
     image: deluan/navidrome:latest
     container_name: navidrome
+    profiles: ["navidrome"]
     restart: unless-stopped
     ports:
       - "4533:4533"
@@ -165,6 +171,7 @@ services:
   suika:
     image: pixelotes/suika:arm64
     container_name: suika
+    profiles: ["suika"]
     restart: unless-stopped
     ports:
       - "8083:8080"

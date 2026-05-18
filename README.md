@@ -103,10 +103,29 @@ covered by [`.gitignore`](.gitignore). Only the bulk media library
 git clone https://github.com/YOUR_USERNAME/MangoStack.git
 cd MangoStack
 
-cp .env.example .env
-$EDITOR .env                            # paths + Scarf secrets
+# Interactive setup: prompts for password, paths, languages and which
+# services to enable; generates .env and fills in JWT secrets / passwords.
+./bootstrap.sh
 
-# Fill in the credentials/API keys marked REPLACE_WITH_... in each config
+# Paste API keys (TMDB, Trakt, OpenSubtitles, ...) into the files the
+# script lists at the end — they come from your password manager.
+
+# Bring the stack up
+docker compose up -d
+```
+
+Once running, the homepage is on <http://raspberrypi:3000> (replace
+`raspberrypi` with your host name or IP).
+
+### Manual setup (without the wizard)
+
+If you'd rather edit by hand:
+
+```bash
+cp .env.example .env
+$EDITOR .env                            # paths, secrets, COMPOSE_PROFILES
+
+# Fill in everything marked REPLACE_WITH_... in the per-service configs
 $EDITOR reel/config/config.yml
 $EDITOR rms/config/config.yml
 $EDITOR suika/config/config.yml
@@ -114,24 +133,10 @@ $EDITOR suika/config/config.yml
 # Optional: customise the homepage tiles
 $EDITOR dashboarr/services.json
 
-# Pull all images and bring the stack up
-docker compose pull
 docker compose up -d
 ```
 
-Once running, the homepage is on <http://raspberrypi:3000> (replace
-`raspberrypi` with your host name or IP).
-
-### Generating Scarf secrets
-
-```bash
-# JWT secret
-openssl rand -hex 48
-
-# UI password — use whatever your password manager generates
-```
-
-Put both in `.env` before the first `docker compose up`.
+Generate any JWT secret with `openssl rand -hex 48`.
 
 ## Per-service configuration
 
