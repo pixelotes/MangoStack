@@ -106,7 +106,8 @@ For deeper tuning, refer to the upstream documentation:
 - Tango → <https://github.com/pixelotes/tango>
 - Scarf → <https://github.com/pixelotes/scarf>
 - Reel  → <https://github.com/pixelotes/reel>
-- RMS, Suika → see the project description on Docker Hub
+- RMS  → <https://github.com/pixelotes/rms>
+- Suika  → <https://github.com/pixelotes/suika>
 - Navidrome → <https://www.navidrome.org/docs>
 
 ## License
