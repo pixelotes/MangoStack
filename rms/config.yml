@@ -1,6 +1,6 @@
-# RMS (Raspberry Media Server) config — copy to ${CONFIG_DIR}/rms/config/config.yml on the host.
+# RMS (Raspberry Media Server) config — lives at ${CONFIG_DIR}/rms/config.yml on the host.
 # Paths are relative to the container's working directory; /app/media is where
-# the host's MEDIA_DIR is mounted. Reference: pixelotes/rms on Docker Hub.
+# the host's MEDIA_DIR is mounted. Reference: https://github.com/pixelotes/rms
 
 app:
   port: 8082

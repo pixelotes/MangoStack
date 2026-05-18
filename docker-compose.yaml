@@ -17,7 +17,7 @@ services:
       - "TZ=${TZ}"
     volumes:
       - "${MEDIA_DIR}:/app/media"
-      - "./rms/config:/app/config"
+      - "${CONFIG_DIR}/rms:/app/config"
     deploy:
       resources:
         limits:
@@ -36,7 +36,7 @@ services:
     ports:
       - "3000:80"
     volumes:
-      - ./dashboarr/services.json:/var/www/localhost/htdocs/services.json:ro
+      - "${CONFIG_DIR}/dashboarr/services.json:/var/www/localhost/htdocs/services.json:ro"
     deploy:
       resources:
         limits:
@@ -58,8 +58,8 @@ services:
       - "7246:7246"
       - "6881:6881"
     volumes:
-      - "./tango/config.yaml:/tango/config.yaml"
-      - "./tango/session:/tango/session"
+      - "${CONFIG_DIR}/tango/config.yaml:/tango/config.yaml"
+      - "${CONFIG_DIR}/tango/session:/tango/session"
       - "${BASE_DIR}:/storage"
     environment:
       - "PUID=${PUID}"
@@ -84,8 +84,8 @@ services:
     ports:
       - "8080:8080"
     volumes:
-      - "./scarf/data:/app/data"
-      - "./scarf/definitions:/app/definitions"
+      - "${CONFIG_DIR}/scarf/data:/app/data"
+      - "${CONFIG_DIR}/scarf/definitions:/app/definitions"
     environment:
       - "PUID=${PUID}"
       - "PGID=${PGID}"
@@ -122,8 +122,8 @@ services:
     ports:
       - "8081:8081"
     volumes:
-      - "./reel/config:/app/config"
-      - "./reel/data:/app/data"
+      - "${CONFIG_DIR}/reel/config.yml:/app/config/config.yml"
+      - "${CONFIG_DIR}/reel/data:/app/data"
       - "${BASE_DIR}:/storage"
     environment:
       - "TZ=${TZ}"
@@ -155,7 +155,7 @@ services:
       - "ND_LOGLEVEL=info"
       - "ND_BASEURL="
     volumes:
-      - "./navidrome:/data"
+      - "${CONFIG_DIR}/navidrome:/data"
       - "${MEDIA_DIR}/Music:/music:ro"
     deploy:
       resources:
@@ -180,7 +180,7 @@ services:
       - "PGID=${PGID}"
       - "TZ=${TZ}"
     volumes:
-      - "./suika/config:/app/config"
+      - "${CONFIG_DIR}/suika:/app/config"
       - "${MEDIA_DIR}/Manga:/app/media:ro"
     deploy:
       resources:

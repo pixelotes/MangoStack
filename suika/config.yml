@@ -1,4 +1,4 @@
-# Suika config — copy to ${CONFIG_DIR}/suika/config/config.yml on the host.
+# Suika config — lives at ${CONFIG_DIR}/suika/config.yml on the host.
 # Reference: pixelotes/suika on Docker Hub.
 
 app:

@@ -2,16 +2,24 @@
 # bootstrap.sh — interactive setup for MangoStack.
 #
 # Walks you through the values that change between rebuilds (passwords, paths,
-# active services) and writes them into .env and the per-service configs.
+# active services) and:
+#   • writes .env
+#   • copies/renders per-service configs into ${CONFIG_DIR}
+#   • pre-creates the runtime dirs so Docker doesn't make them as root
+#
+# CONFIG_DIR defaults to /media/usb/MangoStack — putting configs and the
+# write-heavy state (sqlite DBs, processing_states, sessions, caches) on the
+# USB drive spares the SD card. Set it to "." to keep everything inside the
+# repo, which also makes rendering happen in place.
 #
 # Idempotent on a freshly cloned tree. To redo it after secrets are already
-# baked into the configs, reset the tree first:
+# baked into the rendered configs:
 #
+#     # if CONFIG_DIR was elsewhere, just delete its tree and rerun
+#     rm -rf <CONFIG_DIR> && ./bootstrap.sh
+#
+#     # if you rendered in place (CONFIG_DIR=.), reset with git
 #     git checkout -- . && ./bootstrap.sh
-#
-# After bootstrap, paste the remaining API keys (TMDB, Trakt, OpenSubtitles,
-# Pushbullet…) from your password manager — the script prints a checklist of
-# the placeholders that are still pending.
 
 set -euo pipefail
 
@@ -62,8 +70,8 @@ ask() {
   printf -v "$var" '%s' "${answer:-$default}"
 }
 
-# Marker-based file substitution that is safe with any character in the value
-# (no sed-delimiter or backslash escaping landmines).
+# Marker-based substitution, safe with any character in the value
+# (no sed delimiter / backslash escaping landmines).
 substitute() {
   local file="$1" key="$2" value="$3"
   [[ ! -f "$file" ]] && return 0
@@ -79,31 +87,66 @@ substitute() {
   ' "$file" > "$file.tmp" && mv "$file.tmp" "$file"
 }
 
+# Replace any inline YAML list `languages: ["en", "es"]` with the user list.
+render_languages() {
+  local f="$1"
+  [[ ! -f "$f" ]] && return 0
+  awk -v repl="$LANG_YAML" '
+    {
+      if (match($0, /languages: \[[^]]*\]/)) {
+        $0 = substr($0, 1, RSTART - 1) "languages: " repl substr($0, RSTART + RLENGTH)
+      }
+      print
+    }
+  ' "$f" > "$f.tmp" && mv "$f.tmp" "$f"
+}
+
+# Copy a template file/dir from the repo into $CFG, preserving relative path.
+copy_to_cfg() {
+  local src="$1" dst_rel="$2"
+  local dst="$CFG/$dst_rel"
+  [[ ! -e "$src" ]] && return 0
+  mkdir -p "$(dirname "$dst")"
+  cp -R "$src" "$dst"
+}
+
 # --- banner -----------------------------------------------------------------
 
 cat <<EOF
 
 ${c_bold}🥭 MangoStack bootstrap${c_reset}
 
-Fills in .env, JWT secrets and your default UI password across the active
-services. Run again after ${c_bold}git checkout -- .${c_reset} to change any of these later.
+Fills in .env, copies the per-service configs to your chosen CONFIG_DIR,
+generates JWT secrets, and pre-creates runtime dirs.
 
 EOF
 
 # --- prompts ----------------------------------------------------------------
 
-ask PASSWORD  "Default UI password for the apps"
+ask PASSWORD   "Default UI password for the apps"
 while [[ -z "$PASSWORD" ]]; do
   warn "Password can't be empty."
   ask PASSWORD "Default UI password for the apps"
 done
 
-ask BASE_DIR  "Storage root (downloads + completed media)" "/media/usb/Storage"
-ask MEDIA_DIR "Media library path"                         "${BASE_DIR}/Completed"
-ask TZ        "Timezone (IANA)"                            "Europe/Madrid"
-ask LANGS     "Subtitle languages (comma-separated ISO)"   "en,es"
-ask PUID      "Host PUID"                                  "$(id -u 2>/dev/null || echo 1000)"
-ask PGID      "Host PGID"                                  "$(id -g 2>/dev/null || echo 1000)"
+ask BASE_DIR   "Storage root (downloads + completed media)" "/media/usb/Storage"
+ask MEDIA_DIR  "Media library path"                         "${BASE_DIR}/Completed"
+ask CONFIG_DIR "Where configs & runtime state live"         "/media/usb/MangoStack"
+ask TZ         "Timezone (IANA)"                            "Europe/Madrid"
+ask LANGS      "Subtitle languages (comma-separated ISO)"   "en,es"
+ask PUID       "Host PUID"                                  "$(id -u 2>/dev/null || echo 1000)"
+ask PGID       "Host PGID"                                  "$(id -g 2>/dev/null || echo 1000)"
+
+# Normalise CONFIG_DIR and decide whether we'll render in-place or copy first.
+mkdir -p "$CONFIG_DIR"
+CFG_ABS="$(cd "$CONFIG_DIR" && pwd)"
+if [[ "$CFG_ABS" == "$SCRIPT_DIR" ]]; then
+  IN_PLACE=1
+  CFG="."
+else
+  IN_PLACE=0
+  CFG="$CONFIG_DIR"
+fi
 
 # --- service selection ------------------------------------------------------
 
@@ -192,6 +235,7 @@ TZ=$TZ
 
 BASE_DIR=$BASE_DIR
 MEDIA_DIR=$MEDIA_DIR
+CONFIG_DIR=$CONFIG_DIR
 
 SCARF_UI_PASSWORD=$PASSWORD
 SCARF_JWT_SECRET=$SCARF_JWT
@@ -199,53 +243,83 @@ SCARF_JWT_SECRET=$SCARF_JWT
 COMPOSE_PROFILES=$COMPOSE_PROFILES_VAL
 EOF
 
-# --- render per-service configs --------------------------------------------
+# --- materialise per-service configs in $CFG --------------------------------
 
-info "Rendering service configs"
+if (( IN_PLACE )); then
+  info "Rendering service configs in place (CONFIG_DIR is the repo)"
+else
+  info "Copying templates into $CFG"
+  [[ "${SVC_ENABLED[tango]}" == 1 ]]     && copy_to_cfg tango/config.yaml         tango/config.yaml
+  [[ "${SVC_ENABLED[reel]}" == 1 ]]      && copy_to_cfg reel/config.yml           reel/config.yml
+  [[ "${SVC_ENABLED[rms]}" == 1 ]]       && copy_to_cfg rms/config.yml            rms/config.yml
+  [[ "${SVC_ENABLED[suika]}" == 1 ]]     && copy_to_cfg suika/config.yml          suika/config.yml
+  [[ "${SVC_ENABLED[scarf]}" == 1 ]]     && copy_to_cfg scarf/definitions         scarf/definitions
+  [[ "${SVC_ENABLED[dashboarr]}" == 1 ]] && copy_to_cfg dashboarr/services.json   dashboarr/services.json
+fi
 
-render_languages() {
-  local f="$1"
-  [[ ! -f "$f" ]] && return 0
-  # Replace any inline YAML list `languages: ["en", "es"]` with the user list.
-  awk -v repl="$LANG_YAML" '
-    {
-      if (match($0, /languages: \[[^]]*\]/)) {
-        $0 = substr($0, 1, RSTART - 1) "languages: " repl substr($0, RSTART + RLENGTH)
-      }
-      print
-    }
-  ' "$f" > "$f.tmp" && mv "$f.tmp" "$f"
-}
+# Pre-create runtime dirs that the containers expect but Docker would otherwise
+# materialise as root-owned on first `up`.
+for d in tango/session reel/data scarf/data navidrome; do
+  mkdir -p "$CFG/$d"
+done
+
+# Pre-create the media tree under BASE_DIR / MEDIA_DIR. Reel writes to the
+# Downloads subdirs and then hardlinks/moves into the Completed subdirs, which
+# are also where RMS, Navidrome and Suika read from. mkdir -p is idempotent,
+# so this is a safe no-op when the tree is already populated.
+info "Pre-creating media directories under $BASE_DIR"
+mkdir -p \
+  "$BASE_DIR/Downloads/Movies" \
+  "$BASE_DIR/Downloads/Series" \
+  "$BASE_DIR/Downloads/Anime" \
+  "$BASE_DIR/Downloads/Ebooks" \
+  "$BASE_DIR/Downloads/Manga" \
+  "$BASE_DIR/Downloads/complete"
+
+mkdir -p \
+  "$MEDIA_DIR/Movies" \
+  "$MEDIA_DIR/TV" \
+  "$MEDIA_DIR/Anime" \
+  "$MEDIA_DIR/Anime_Movies" \
+  "$MEDIA_DIR/Youtube" \
+  "$MEDIA_DIR/Ebooks" \
+  "$MEDIA_DIR/Manga" \
+  "$MEDIA_DIR/Music"
+
+# --- substitute placeholders -----------------------------------------------
+
+info "Substituting placeholders"
 
 if [[ "${SVC_ENABLED[reel]}" == 1 ]]; then
-  f=reel/config/config.yml
-  substitute "$f" "REPLACE_WITH_STRONG_PASSWORD"  "$PASSWORD"
+  f="$CFG/reel/config.yml"
+  substitute "$f" "REPLACE_WITH_STRONG_PASSWORD"    "$PASSWORD"
   substitute "$f" "REPLACE_WITH_LONG_RANDOM_STRING" "$REEL_JWT"
   render_languages "$f"
 fi
 
 if [[ "${SVC_ENABLED[rms]}" == 1 ]]; then
-  f=rms/config/config.yml
-  substitute "$f" "REPLACE_WITH_STRONG_PASSWORD"  "$PASSWORD"
+  f="$CFG/rms/config.yml"
+  substitute "$f" "REPLACE_WITH_STRONG_PASSWORD"    "$PASSWORD"
   substitute "$f" "REPLACE_WITH_LONG_RANDOM_STRING" "$RMS_JWT"
   render_languages "$f"
 fi
 
 if [[ "${SVC_ENABLED[suika]}" == 1 ]]; then
-  f=suika/config/config.yml
-  substitute "$f" "REPLACE_WITH_STRONG_PASSWORD"  "$PASSWORD"
+  f="$CFG/suika/config.yml"
+  substitute "$f" "REPLACE_WITH_STRONG_PASSWORD"    "$PASSWORD"
   substitute "$f" "REPLACE_WITH_LONG_RANDOM_STRING" "$SUIKA_JWT"
 fi
 
 # Tango's shipped config has no placeholders.
 
-ok "Stack bootstrapped."
+ok "Stack bootstrapped at $CFG_ABS"
 
 # --- pending-API-keys report ------------------------------------------------
 
 pending=0
 declare -a pending_files
-for f in reel/config/config.yml rms/config/config.yml suika/config/config.yml; do
+for rel in reel/config.yml rms/config.yml suika/config.yml; do
+  f="$CFG/$rel"
   [[ ! -f "$f" ]] && continue
   if grep -q 'REPLACE_WITH_' "$f"; then
     pending=1
@@ -266,6 +340,6 @@ cat <<EOF
 ${c_dim}When you're done editing keys, bring the stack up:${c_reset}
   ${c_bold}docker compose up -d${c_reset}
 
-${c_dim}The rendered configs and .env contain secrets — do not commit them.${c_reset}
+${c_dim}.env and the rendered configs contain secrets — do not commit them.${c_reset}
 
 EOF

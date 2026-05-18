@@ -1,4 +1,4 @@
-# Reel config — copy to ${CONFIG_DIR}/reel/config/config.yml on the host.
+# Reel config — lives at ${CONFIG_DIR}/reel/config.yml on the host.
 # Paths starting with /storage live on the host's BASE_DIR.
 # Reference: https://github.com/pixelotes/reel
 
