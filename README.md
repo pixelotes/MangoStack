@@ -10,15 +10,29 @@ my Pi", MangoStack is the lightweight alternative I run on mine.
 
 ## What is in the stack
 
-| Service       | Role                              | Project |
-|---------------|-----------------------------------|---------|
-| **Dashboarr** | Static homepage with service tiles | [pixelotes/dashboarr](https://github.com/pixelotes/dashboarr); link list lives in [`./dashboarr/services.json`](dashboarr/services.json) |
-| **Tango**     | Torrent client with web UI         | [pixelotes/tango](https://github.com/pixelotes/tango) |
-| **Scarf**     | Indexer proxy / aggregator         | [pixelotes/scarf](https://github.com/pixelotes/scarf) |
-| **Reel**      | Movie & TV downloader/automator (also fetches subtitles) | [pixelotes/reel](https://github.com/pixelotes/reel) |
-| **RMS**       | Raspberry Media Server — lightweight media server with built-in subtitle support | Docker image `pixelotes/rms:arm64` |
-| **Suika**     | Manga reader                       | Docker image `pixelotes/suika:arm64` |
-| Navidrome     | Music streaming                    | upstream `deluan/navidrome` |
+| Service       | Role                              | Equivalent to                          | Project |
+|---------------|-----------------------------------|----------------------------------------|---------|
+| **Dashboarr** | Static homepage with service tiles | Homepage, Homarr, Heimdall            | [pixelotes/dashboarr](https://github.com/pixelotes/dashboarr); link list lives in [`./dashboarr/services.json`](dashboarr/services.json) |
+| **Tango**     | Web-UI wrapper around `aria2c` — very small footprint | qBittorrent, Transmission, Deluge     | [pixelotes/tango](https://github.com/pixelotes/tango) |
+| **Scarf**     | Indexer proxy / aggregator         | Prowlarr, Jackett                     | [pixelotes/scarf](https://github.com/pixelotes/scarf) |
+| **Reel**      | Movie & TV automator with a configurable post-download pipeline (metadata, posters, subtitles, renaming…) | Sonarr + Radarr + Lidarr + Readarr, Flexget | [pixelotes/reel](https://github.com/pixelotes/reel) |
+| **RMS**       | Raspberry Media Server — lightweight media server with built-in subtitle support; ships its own web client and speaks enough of the Jellyfin API to be used from [Streamyfin](https://streamyfin.app/) | Jellyfin, Emby, Plex | [pixelotes/rms](https://github.com/pixelotes/rms) |
+| **Suika**     | Manga reader                       | Komga, Kavita                         | [pixelotes/suika](https://github.com/pixelotes/suika) |
+| Navidrome     | Music streaming                    | Subsonic, Airsonic                    | upstream `deluan/navidrome` |
+
+### Mix and match
+
+Nothing in MangoStack is hard-wired to the bundled services:
+
+- **Reel** speaks the standard Torznab/Newznab protocol, so it works just as
+  well with Jackett or Prowlarr instead of Scarf, and it can drive
+  qBittorrent, Transmission or any other client in place of Tango.
+- **Tango** is a thin web-UI wrapper around `aria2c`. If you would rather
+  use qBittorrent or Transmission, drop Tango and point Reel at the
+  replacement.
+- Don't need a piece? Comment its block out in `docker-compose.yaml` — the
+  rest of the stack keeps running. Common cuts: drop **Navidrome** if you
+  don't stream music, drop **Suika** if you don't read manga.
 
 ## Repository layout
 
