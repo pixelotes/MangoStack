@@ -52,7 +52,8 @@ The threat model of every service in this repo assumes a trusted LAN.
 | **Reel**      | Movie & TV automator with a configurable post-download pipeline (metadata, posters, subtitles, renaming…) | Sonarr + Radarr + Lidarr + Readarr, Flexget | [pixelotes/reel](https://github.com/pixelotes/reel) |
 | **RMS**       | Raspberry Media Server — lightweight media server with built-in subtitle support; ships its own web client and speaks enough of the Jellyfin API to be used from the official [Jellyfin clients](https://jellyfin.org/clients/), [Streamyfin](https://streamyfin.app/) or the [Jellyfin for Kodi](https://github.com/jellyfin/jellyfin-kodi) plugin | Jellyfin, Emby, Plex | [pixelotes/rms](https://github.com/pixelotes/rms) |
 | **Suika**     | Manga reader                       | Komga, Kavita                         | [pixelotes/suika](https://github.com/pixelotes/suika) |
-| Navidrome     | Music streaming                    | Subsonic, Airsonic                    | upstream `deluan/navidrome` |
+| **Kaze**      | Minimal Subsonic-compatible music server (filesystem-first, no DB) | Subsonic, Airsonic, Navidrome | [pixelotes/kaze](https://github.com/pixelotes/kaze) |
+| **Sumi**      | Minimal EPUB reader (filesystem-first, no DB; bookmarks in localStorage) | Calibre Web, Kavita | [pixelotes/sumi](https://github.com/pixelotes/sumi) |
 
 ### Mix and match
 
@@ -65,7 +66,7 @@ Nothing in MangoStack is hard-wired to the bundled services:
   use qBittorrent or Transmission, drop Tango and point Reel at the
   replacement.
 - Don't need a piece? Comment its block out in `docker-compose.yaml` — the
-  rest of the stack keeps running. Common cuts: drop **Navidrome** if you
+  rest of the stack keeps running. Common cuts: drop **Kaze** if you
   don't stream music, drop **Suika** if you don't read manga.
 
 ## Repository layout
@@ -79,8 +80,9 @@ Nothing in MangoStack is hard-wired to the bundled services:
 ├── reel/                 # Reel config + (runtime) data
 ├── rms/                  # RMS config (config.yml is tracked, rest ignored)
 ├── suika/                # Suika config (config.yml is tracked, rest ignored)
+├── kaze/                 # Kaze config (config.yml is tracked, rest ignored)
+├── sumi/                 # Sumi config (config.yml is tracked, rest ignored)
 ├── scarf/                # Scarf indexer definitions + (runtime) data
-├── navidrome/            # (runtime) Navidrome state — gitignored
 └── README.md
 ```
 
@@ -150,9 +152,10 @@ copy step.
 | Reel      | [`reel/config/config.yml`](reel/config/config.yml) | needs TMDB, Trakt, Scarf, OpenSubtitles keys |
 | RMS       | [`rms/config/config.yml`](rms/config/config.yml)   | needs TMDB and OpenSubtitles keys |
 | Suika     | [`suika/config/config.yml`](suika/config/config.yml) | just UI password + JWT |
+| Kaze      | [`kaze/config.yml`](kaze/config.yml) | just UI password + JWT |
+| Sumi      | [`sumi/config.yml`](sumi/config.yml) | just UI password + JWT |
 | Scarf     | [`scarf/definitions/`](scarf/definitions) | 4 example indexer definitions; Scarf's other settings come from environment variables in `docker-compose.yaml` |
 | Dashboarr | [`dashboarr/services.json`](dashboarr/services.json) | edit hostname and Trakt links |
-| Navidrome | n/a — configured via env vars in `docker-compose.yaml` | |
 
 For deeper tuning, refer to the upstream documentation:
 
@@ -161,7 +164,8 @@ For deeper tuning, refer to the upstream documentation:
 - Reel  → <https://github.com/pixelotes/reel>
 - RMS  → <https://github.com/pixelotes/rms>
 - Suika  → <https://github.com/pixelotes/suika>
-- Navidrome → <https://www.navidrome.org/docs>
+- Kaze   → <https://github.com/pixelotes/kaze>
+- Sumi   → <https://github.com/pixelotes/sumi>
 
 ## License
 

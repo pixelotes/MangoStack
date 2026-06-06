@@ -1,0 +1,11 @@
+# Sumi config — lives at ${CONFIG_DIR}/sumi/config.yml on the host.
+# Reference: pixelotes/sumi on Docker Hub.
+
+app:
+  port: 8085
+  ui_password: "REPLACE_WITH_STRONG_PASSWORD"
+  jwt_secret: "REPLACE_WITH_LONG_RANDOM_STRING"   # openssl rand -hex 48
+
+libraries:
+  - friendly_name: "Books"
+    path: "/app/media"

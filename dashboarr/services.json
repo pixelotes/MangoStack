@@ -18,8 +18,9 @@
     "category": "Media Server",
     "services": [
       { "name": "RMS", "url": "http://raspberrypi:8096", "icon": "🍿", "description": "Stream your media" },
-      { "name": "Navidrome", "url": "http://raspberrypi:4533", "icon": "🎵", "description": "Music server" },
-      { "name": "Suika", "url": "http://raspberrypi:8083", "icon": "🍉", "description": "Manga reader" }
+      { "name": "Kaze", "url": "http://raspberrypi:4533", "icon": "🎐", "description": "Music server (Subsonic-compatible)" },
+      { "name": "Suika", "url": "http://raspberrypi:8083", "icon": "🍉", "description": "Manga reader" },
+      { "name": "Sumi", "url": "http://raspberrypi:8085", "icon": "🖋️", "description": "Ebook reader (epub)" }
     ]
   }
 ]

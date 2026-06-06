@@ -140,10 +140,10 @@ services:
   # MUSIC SERVER
   ##############
 
-  navidrome:
-    image: deluan/navidrome:latest
-    container_name: navidrome
-    profiles: ["navidrome"]
+  kaze:
+    image: pixelotes/kaze:arm64
+    container_name: kaze
+    profiles: ["kaze"]
     restart: unless-stopped
     ports:
       - "4533:4533"
@@ -151,18 +151,46 @@ services:
       - "PUID=${PUID}"
       - "PGID=${PGID}"
       - "TZ=${TZ}"
-      - "ND_SCANSCHEDULE=1h"
-      - "ND_LOGLEVEL=info"
-      - "ND_BASEURL="
+      # Aggressive GC: this is a low-throughput server, we prefer trimming
+      # heap headroom over CPU cycles. Tune up if scans get sluggish.
+      - "GOGC=20"
+      - "GOMEMLIMIT=32MiB"
     volumes:
-      - "${CONFIG_DIR}/navidrome:/data"
-      - "${MEDIA_DIR}/Music:/music:ro"
+      - "${CONFIG_DIR}/kaze:/app/config"
+      - "${MEDIA_DIR}/Music:/app/media:ro"
     deploy:
       resources:
         limits:
-          memory: 128m
+          memory: 64m
         reservations:
-          memory: 192m
+          memory: 16m
+
+  ##############
+  # EBOOK READER
+  ##############
+
+  sumi:
+    image: pixelotes/sumi:arm64
+    container_name: sumi
+    profiles: ["sumi"]
+    restart: unless-stopped
+    ports:
+      - "8085:8085"
+    environment:
+      - "PUID=${PUID}"
+      - "PGID=${PGID}"
+      - "TZ=${TZ}"
+      - "GOGC=20"
+      - "GOMEMLIMIT=32MiB"
+    volumes:
+      - "${CONFIG_DIR}/sumi:/app/config"
+      - "${MEDIA_DIR}/Ebooks:/app/media:ro"
+    deploy:
+      resources:
+        limits:
+          memory: 64m
+        reservations:
+          memory: 16m
 
   ##############
   # MANGA READER

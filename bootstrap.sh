@@ -156,13 +156,14 @@ declare -A SVC_LABEL=(
   [reel]="Reel       — media automator"
   [rms]="RMS        — media server"
   [dashboarr]="Dashboarr  — homepage"
-  [navidrome]="Navidrome  — music streaming"
+  [kaze]="Kaze       — music streaming (subsonic)"
   [suika]="Suika      — manga reader"
+  [sumi]="Sumi       — ebook reader (epub)"
 )
-SVC_ORDER=(tango scarf reel rms dashboarr navidrome suika)
+SVC_ORDER=(tango scarf reel rms dashboarr kaze suika sumi)
 declare -A SVC_ENABLED=(
   [tango]=1 [scarf]=1 [reel]=1 [rms]=1 [dashboarr]=1
-  [navidrome]=0 [suika]=0
+  [kaze]=0 [suika]=0 [sumi]=0
 )
 
 print_services() {
@@ -181,7 +182,7 @@ while true; do
   printf '\nToggle a number, or press Enter to confirm: '
   IFS= read -r choice
   [[ -z "$choice" ]] && break
-  if [[ "$choice" =~ ^[1-7]$ ]]; then
+  if [[ "$choice" =~ ^[1-8]$ ]]; then
     s="${SVC_ORDER[$((choice - 1))]}"
     if [[ "${SVC_ENABLED[$s]}" == 1 ]]; then
       SVC_ENABLED[$s]=0
@@ -189,7 +190,7 @@ while true; do
       SVC_ENABLED[$s]=1
     fi
   else
-    warn "Pick a number 1-7."
+    warn "Pick a number 1-8."
   fi
 done
 
@@ -221,6 +222,8 @@ SCARF_JWT="$(openssl rand -hex 48)"
 REEL_JWT="$(openssl rand -hex 48)"
 RMS_JWT="$(openssl rand -hex 48)"
 SUIKA_JWT="$(openssl rand -hex 48)"
+KAZE_JWT="$(openssl rand -hex 48)"
+SUMI_JWT="$(openssl rand -hex 48)"
 
 # --- write .env -------------------------------------------------------------
 
@@ -253,19 +256,21 @@ else
   [[ "${SVC_ENABLED[reel]}" == 1 ]]      && copy_to_cfg reel/config.yml           reel/config.yml
   [[ "${SVC_ENABLED[rms]}" == 1 ]]       && copy_to_cfg rms/config.yml            rms/config.yml
   [[ "${SVC_ENABLED[suika]}" == 1 ]]     && copy_to_cfg suika/config.yml          suika/config.yml
+  [[ "${SVC_ENABLED[kaze]}" == 1 ]]      && copy_to_cfg kaze/config.yml           kaze/config.yml
+  [[ "${SVC_ENABLED[sumi]}" == 1 ]]      && copy_to_cfg sumi/config.yml           sumi/config.yml
   [[ "${SVC_ENABLED[scarf]}" == 1 ]]     && copy_to_cfg scarf/definitions         scarf/definitions
   [[ "${SVC_ENABLED[dashboarr]}" == 1 ]] && copy_to_cfg dashboarr/services.json   dashboarr/services.json
 fi
 
 # Pre-create runtime dirs that the containers expect but Docker would otherwise
 # materialise as root-owned on first `up`.
-for d in tango/session reel/data scarf/data navidrome; do
+for d in tango/session reel/data scarf/data; do
   mkdir -p "$CFG/$d"
 done
 
 # Pre-create the media tree under BASE_DIR / MEDIA_DIR. Reel writes to the
 # Downloads subdirs and then hardlinks/moves into the Completed subdirs, which
-# are also where RMS, Navidrome and Suika read from. mkdir -p is idempotent,
+# are also where RMS, Kaze, Suika and Sumi read from. mkdir -p is idempotent,
 # so this is a safe no-op when the tree is already populated.
 info "Pre-creating media directories under $BASE_DIR"
 mkdir -p \
@@ -310,6 +315,18 @@ if [[ "${SVC_ENABLED[suika]}" == 1 ]]; then
   substitute "$f" "REPLACE_WITH_LONG_RANDOM_STRING" "$SUIKA_JWT"
 fi
 
+if [[ "${SVC_ENABLED[kaze]}" == 1 ]]; then
+  f="$CFG/kaze/config.yml"
+  substitute "$f" "REPLACE_WITH_STRONG_PASSWORD"    "$PASSWORD"
+  substitute "$f" "REPLACE_WITH_LONG_RANDOM_STRING" "$KAZE_JWT"
+fi
+
+if [[ "${SVC_ENABLED[sumi]}" == 1 ]]; then
+  f="$CFG/sumi/config.yml"
+  substitute "$f" "REPLACE_WITH_STRONG_PASSWORD"    "$PASSWORD"
+  substitute "$f" "REPLACE_WITH_LONG_RANDOM_STRING" "$SUMI_JWT"
+fi
+
 # Tango's shipped config has no placeholders.
 
 ok "Stack bootstrapped at $CFG_ABS"
@@ -318,7 +335,7 @@ ok "Stack bootstrapped at $CFG_ABS"
 
 pending=0
 declare -a pending_files
-for rel in reel/config.yml rms/config.yml suika/config.yml; do
+for rel in reel/config.yml rms/config.yml suika/config.yml kaze/config.yml sumi/config.yml; do
   f="$CFG/$rel"
   [[ ! -f "$f" ]] && continue
   if grep -q 'REPLACE_WITH_' "$f"; then

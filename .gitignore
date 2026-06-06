@@ -12,8 +12,11 @@ rms/config/*
 !rms/config/config.yml
 suika/config/*
 !suika/config/config.yml
+kaze/*
+!kaze/config.yml
+sumi/*
+!sumi/config.yml
 scarf/data/
-navidrome/
 
 # Logs
 *.log
