@@ -164,8 +164,7 @@ cp .env.example .env
 $EDITOR .env                            # paths, secrets, COMPOSE_PROFILES
 
 # Fill in everything marked REPLACE_WITH_... in the per-service configs
-$EDITOR tango/config.yaml                # rpc_secret
-$EDITOR reel/config.yml                  # same secret, SCARF_API_KEY, API keys
+$EDITOR reel/config.yml                  # SCARF_API_KEY, API keys
 $EDITOR rms/config.yml
 $EDITOR suika/config.yml
 
@@ -185,8 +184,8 @@ copy step.
 
 | Service   | Config file                              | Notes |
 |-----------|------------------------------------------|-------|
-| Tango     | [`tango/config.yaml`](tango/config.yaml) | tuned for Raspberry Pi 3B; exposes aria2's JSON-RPC to Reel on the Docker network, guarded by `rpc_secret` |
-| Reel      | [`reel/config.yml`](reel/config.yml) | drives Tango's aria2c over JSON-RPC (`torrent_client.secret` = Tango's `rpc_secret`); needs TMDB, Trakt, OpenSubtitles keys and `SCARF_API_KEY` |
+| Tango     | [`tango/config.yaml`](tango/config.yaml) | tuned for Raspberry Pi 3B |
+| Reel      | [`reel/config.yml`](reel/config.yml) | talks to Tango's REST API (`torrent_client.type: storm`); needs TMDB, Trakt, OpenSubtitles keys and `SCARF_API_KEY` |
 | RMS       | [`rms/config.yml`](rms/config.yml)   | needs TMDB and OpenSubtitles keys |
 | Suika     | [`suika/config.yml`](suika/config.yml) | just UI password + JWT |
 | Kaze      | [`kaze/config.yml`](kaze/config.yml) | just UI password + JWT |

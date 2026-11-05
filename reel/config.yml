@@ -14,15 +14,15 @@ app:
   search_timeout: 60
   filter_log_level: "detail"
 
-# Talks to the aria2c inside the Tango container over JSON-RPC on the internal
-# Docker network (Tango's REST API has no Reel client yet). The secret must
-# match aria2.rpc_secret in tango/config.yaml — bootstrap.sh fills both.
+# Talks to Tango's REST API on the internal Docker network. Reel's "storm"
+# client speaks the API Tango and Storm share, so downloads get Tango's
+# tracker injection and per-torrent paths.
 torrent_client:
-  type: "aria2"
-  host: "http://tango:6800/jsonrpc"
+  type: "storm"
+  host: "http://tango:7246"
   username: ""
   password: ""
-  secret: "REPLACE_WITH_LONG_RANDOM_STRING"
+  secret: ""
   download_path: "/storage/Downloads/complete"
 
 notifications:
@@ -90,19 +90,11 @@ ebooks:
     - type: "gutendex"
       url: "https://gutendex.com"
 
-manga:
-  providers: ["mangadex"]
-  download_folder: "/storage/Downloads/Manga"
-  destination_folder: "/storage/Completed/Manga"
-  move_method: ["move", "copy"]
-  languages: ["en", "es"]
-
 file_renaming:
   movie_template: "{title} ({year}) [{quality}]"
   series_template: "{title} - S{season}E{episode} [{quality}]"
   anime_template: "{title} - {season}x{episode} [{quality}]"
   ebook_template: "{title} ({year})"
-  manga_template: "{title} - S{season}E{episode}"
 
 database:
   path: "./data/reel.db"

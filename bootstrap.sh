@@ -240,7 +240,6 @@ RMS_JWT="$(openssl rand -hex 48)"
 SUIKA_JWT="$(openssl rand -hex 48)"
 KAZE_JWT="$(openssl rand -hex 48)"
 SUMI_JWT="$(openssl rand -hex 48)"
-TANGO_RPC_SECRET="$(openssl rand -hex 24)"
 
 # --- write .env -------------------------------------------------------------
 
@@ -318,7 +317,6 @@ if [[ "${SVC_ENABLED[reel]}" == 1 ]]; then
   f="$CFG/reel/config.yml"
   substitute "$f" "REPLACE_WITH_STRONG_PASSWORD"    "$PASSWORD"
   substitute "$f" "jwt_secret: \"REPLACE_WITH_LONG_RANDOM_STRING\"" "jwt_secret: \"$REEL_JWT\""
-  substitute "$f" "secret: \"REPLACE_WITH_LONG_RANDOM_STRING\""     "secret: \"$TANGO_RPC_SECRET\""
   substitute "$f" "REPLACE_WITH_SCARF_API_KEY"      "$SCARF_API_KEY"
   render_languages "$f"
 fi
@@ -348,10 +346,7 @@ if [[ "${SVC_ENABLED[sumi]}" == 1 ]]; then
   substitute "$f" "REPLACE_WITH_LONG_RANDOM_STRING" "$SUMI_JWT"
 fi
 
-if [[ "${SVC_ENABLED[tango]}" == 1 ]]; then
-  f="$CFG/tango/config.yaml"
-  substitute "$f" "REPLACE_WITH_LONG_RANDOM_STRING" "$TANGO_RPC_SECRET"
-fi
+# Tango's shipped config has no placeholders.
 
 ok "Stack bootstrapped at $CFG_ABS"
 
