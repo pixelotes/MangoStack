@@ -169,11 +169,12 @@ declare -A SVC_LABEL=(
   [kaze]="Kaze       — music streaming (subsonic)"
   [suika]="Suika      — manga reader"
   [sumi]="Sumi       — ebook reader (epub)"
+  [parasol]="Parasol    — Cloudflare solver for Scarf"
 )
-SVC_ORDER=(tango scarf reel rms dashboarr kaze suika sumi)
+SVC_ORDER=(tango scarf reel rms dashboarr kaze suika sumi parasol)
 declare -A SVC_ENABLED=(
   [tango]=1 [scarf]=1 [reel]=1 [rms]=1 [dashboarr]=1
-  [kaze]=0 [suika]=0 [sumi]=0
+  [kaze]=0 [suika]=0 [sumi]=0 [parasol]=0
 )
 
 print_services() {
@@ -192,7 +193,7 @@ while true; do
   printf '\nToggle a number, or press Enter to confirm: '
   IFS= read -r choice
   [[ -z "$choice" ]] && break
-  if [[ "$choice" =~ ^[1-8]$ ]]; then
+  if [[ "$choice" =~ ^[1-9]$ ]]; then
     s="${SVC_ORDER[$((choice - 1))]}"
     if [[ "${SVC_ENABLED[$s]}" == 1 ]]; then
       SVC_ENABLED[$s]=0
@@ -200,7 +201,7 @@ while true; do
       SVC_ENABLED[$s]=1
     fi
   else
-    warn "Pick a number 1-8."
+    warn "Pick a number 1-9."
   fi
 done
 
@@ -209,6 +210,10 @@ for s in "${SVC_ORDER[@]}"; do
   [[ "${SVC_ENABLED[$s]}" == 1 ]] && PROFILES+=("$s")
 done
 COMPOSE_PROFILES_VAL="$(IFS=,; echo "${PROFILES[*]}")"
+
+# Scarf sends Cloudflare-gated indexers through parasol when it is enabled.
+FLARESOLVERR_URL_VAL=""
+[[ "${SVC_ENABLED[parasol]}" == 1 ]] && FLARESOLVERR_URL_VAL="http://parasol:8191"
 
 # --- derived values ---------------------------------------------------------
 
@@ -255,6 +260,7 @@ CONFIG_DIR=$CONFIG_DIR
 SCARF_UI_PASSWORD=$PASSWORD
 SCARF_JWT_SECRET=$SCARF_JWT
 SCARF_API_KEY=$SCARF_API_KEY
+FLARESOLVERR_URL=$FLARESOLVERR_URL_VAL
 
 COMPOSE_PROFILES=$COMPOSE_PROFILES_VAL
 EOF

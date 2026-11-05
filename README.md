@@ -78,6 +78,7 @@ The threat model of every service in this repo assumes a trusted LAN.
 | **Suika**     | Manga reader                       | Komga, Kavita                         | [pixelotes/suika](https://github.com/pixelotes/suika) |
 | **Kaze**      | Minimal Subsonic-compatible music server (filesystem-first, no DB) | Subsonic, Airsonic, Navidrome | [pixelotes/kaze](https://github.com/pixelotes/kaze) |
 | **Sumi**      | Minimal EPUB reader (filesystem-first, no DB; bookmarks in localStorage) | Calibre Web, Kavita | [pixelotes/sumi](https://github.com/pixelotes/sumi) |
+| **Parasol**   | Optional. Browserless Cloudflare challenge solver for Scarf's protected indexers; speaks FlareSolverr's API and caches the clearance cookie per site | FlareSolverr, Byparr | [pixelotes/parasol](https://github.com/pixelotes/parasol) |
 
 ### Mix and match
 
@@ -92,6 +93,12 @@ Nothing in MangoStack is hard-wired to the bundled services:
 - Don't need a piece? Comment its block out in `docker-compose.yaml` — the
   rest of the stack keeps running. Common cuts: drop **Kaze** if you
   don't stream music, drop **Suika** if you don't read manga.
+- **Parasol** is off by default. A few public indexers (EZTV, Uindex,
+  Tokyo Toshokan, BTdirectory) sit behind Cloudflare challenges; enable the
+  `parasol` profile and set `FLARESOLVERR_URL=http://parasol:8191` to reach
+  them. It replaces FlareSolverr at a fraction of the memory (a few MB idle,
+  ~200 MB after solving, versus ~700 MB). If you already run FlareSolverr on
+  a bigger machine, point `FLARESOLVERR_URL` there instead.
 
 ## Repository layout
 

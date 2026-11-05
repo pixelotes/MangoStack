@@ -105,6 +105,10 @@ services:
       - "CACHE_ENABLED=true"
       - "MAX_CACHE_SIZE_MB=32"
       - "MAX_CONCURRENT_SEARCHES=3"
+      # Cloudflare solver for indexers with "Use FlareSolverr" on. Points at
+      # parasol when that profile is enabled; any FlareSolverr URL works too.
+      # Empty disables it.
+      - "FLARESOLVERR_URL=${FLARESOLVERR_URL:-}"
     deploy:
       resources:
         limits:
@@ -112,6 +116,27 @@ services:
         reservations:
           memory: 16m
     restart: unless-stopped
+
+  ###################
+  # CLOUDFLARE SOLVER
+  ###################
+
+  # Browserless, FlareSolverr-compatible solver (https://github.com/pixelotes/parasol).
+  # Scarf reaches it at http://parasol:8191; no host port is published.
+  # Memory stays at a few MB idle and grows to ~200 MB after its first solves.
+  parasol:
+    image: pixelotes/parasol:arm64
+    container_name: parasol
+    profiles: ["parasol"]
+    restart: unless-stopped
+    expose:
+      - "8191"
+    deploy:
+      resources:
+        limits:
+          memory: 320m
+        reservations:
+          memory: 16m
 
   ##################
   # MEDIA DOWNLOADER
