@@ -70,6 +70,16 @@ ask() {
   printf -v "$var" '%s' "${answer:-$default}"
 }
 
+# Like ask, but without echoing the input (and no default).
+ask_secret() {
+  local var="$1" prompt="$2"
+  local answer
+  printf '%s: ' "$prompt"
+  IFS= read -rs answer
+  printf '\n'
+  printf -v "$var" '%s' "$answer"
+}
+
 # Marker-based substitution, safe with any character in the value
 # (no sed delimiter / backslash escaping landmines).
 substitute() {
@@ -123,10 +133,10 @@ EOF
 
 # --- prompts ----------------------------------------------------------------
 
-ask PASSWORD   "Default UI password for the apps"
+ask_secret PASSWORD "Default UI password for the apps"
 while [[ -z "$PASSWORD" ]]; do
   warn "Password can't be empty."
-  ask PASSWORD "Default UI password for the apps"
+  ask_secret PASSWORD "Default UI password for the apps"
 done
 
 ask BASE_DIR   "Storage root (downloads + completed media)" "/media/usb/Storage"
@@ -219,11 +229,13 @@ done
 LANG_YAML+="]"
 
 SCARF_JWT="$(openssl rand -hex 48)"
+SCARF_API_KEY="$(openssl rand -hex 16)"
 REEL_JWT="$(openssl rand -hex 48)"
 RMS_JWT="$(openssl rand -hex 48)"
 SUIKA_JWT="$(openssl rand -hex 48)"
 KAZE_JWT="$(openssl rand -hex 48)"
 SUMI_JWT="$(openssl rand -hex 48)"
+TANGO_RPC_SECRET="$(openssl rand -hex 24)"
 
 # --- write .env -------------------------------------------------------------
 
@@ -242,6 +254,7 @@ CONFIG_DIR=$CONFIG_DIR
 
 SCARF_UI_PASSWORD=$PASSWORD
 SCARF_JWT_SECRET=$SCARF_JWT
+SCARF_API_KEY=$SCARF_API_KEY
 
 COMPOSE_PROFILES=$COMPOSE_PROFILES_VAL
 EOF
@@ -298,7 +311,9 @@ info "Substituting placeholders"
 if [[ "${SVC_ENABLED[reel]}" == 1 ]]; then
   f="$CFG/reel/config.yml"
   substitute "$f" "REPLACE_WITH_STRONG_PASSWORD"    "$PASSWORD"
-  substitute "$f" "REPLACE_WITH_LONG_RANDOM_STRING" "$REEL_JWT"
+  substitute "$f" "jwt_secret: \"REPLACE_WITH_LONG_RANDOM_STRING\"" "jwt_secret: \"$REEL_JWT\""
+  substitute "$f" "secret: \"REPLACE_WITH_LONG_RANDOM_STRING\""     "secret: \"$TANGO_RPC_SECRET\""
+  substitute "$f" "REPLACE_WITH_SCARF_API_KEY"      "$SCARF_API_KEY"
   render_languages "$f"
 fi
 
@@ -327,7 +342,10 @@ if [[ "${SVC_ENABLED[sumi]}" == 1 ]]; then
   substitute "$f" "REPLACE_WITH_LONG_RANDOM_STRING" "$SUMI_JWT"
 fi
 
-# Tango's shipped config has no placeholders.
+if [[ "${SVC_ENABLED[tango]}" == 1 ]]; then
+  f="$CFG/tango/config.yaml"
+  substitute "$f" "REPLACE_WITH_LONG_RANDOM_STRING" "$TANGO_RPC_SECRET"
+fi
 
 ok "Stack bootstrapped at $CFG_ABS"
 
@@ -335,7 +353,7 @@ ok "Stack bootstrapped at $CFG_ABS"
 
 pending=0
 declare -a pending_files
-for rel in reel/config.yml rms/config.yml suika/config.yml kaze/config.yml sumi/config.yml; do
+for rel in tango/config.yaml reel/config.yml rms/config.yml suika/config.yml kaze/config.yml sumi/config.yml; do
   f="$CFG/$rel"
   [[ ! -f "$f" ]] && continue
   if grep -q 'REPLACE_WITH_' "$f"; then

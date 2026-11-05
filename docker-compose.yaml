@@ -96,6 +96,9 @@ services:
       - "UI_PASSWORD=${SCARF_UI_PASSWORD}"
       - "SKIP_TLS_VERIFY=true"
       - "JWT_SECRET=${SCARF_JWT_SECRET}"
+      # Torznab API key. Scarf generates a random one on every start unless
+      # pinned here; Reel's config must carry the same value.
+      - "FLEXGET_API_KEY=${SCARF_API_KEY}"
       - "DEFAULT_API_LIMIT=300"
       - "CACHE_TTL=30m"
       - "ENABLE_CRONJOBS=false"

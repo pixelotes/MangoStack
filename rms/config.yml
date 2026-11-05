@@ -53,13 +53,16 @@ libraries:
 
 # Optional: per-user library access. If omitted, a single account using
 # app.ui_password is created with access to every library.
-users:
-  - username: "alice"
-    password: "REPLACE_WITH_STRONG_PASSWORD"
-    libraries: ["Movies", "Shows", "Anime", "Anime Movies", "YouTube"]
-  - username: "bob"
-    password: "REPLACE_WITH_STRONG_PASSWORD"
-    libraries: ["Movies", "Shows"]
+# Uncomment and edit to enable. Left commented on purpose: bootstrap.sh
+# replaces every REPLACE_WITH_STRONG_PASSWORD, so an active block here would
+# silently create these example accounts with your UI password.
+# users:
+#   - username: "alice"
+#     password: "REPLACE_WITH_STRONG_PASSWORD"
+#     libraries: ["Movies", "Shows", "Anime", "Anime Movies", "YouTube"]
+#   - username: "bob"
+#     password: "REPLACE_WITH_STRONG_PASSWORD"
+#     libraries: ["Movies", "Shows"]
 
 crawlers:
   subtitles:

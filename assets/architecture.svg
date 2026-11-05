@@ -1,0 +1,86 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 880 400" width="880" height="400" font-family="-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13">
+  <defs>
+    <marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 Z" fill="#6e7781"/>
+    </marker>
+    <style>
+      .box{fill:#fff;stroke:#d0d7de;stroke-width:1.5;rx:8}
+      .svc{fill:#fff7e6;stroke:#f0a94b;stroke-width:1.5}
+      .rd{fill:#eef6ff;stroke:#6ea8e8;stroke-width:1.5}
+      .zone{fill:none;stroke:#d0d7de;stroke-width:1.5;stroke-dasharray:6 4}
+      .t{fill:#1f2328}
+      .s{fill:#57606a;font-size:11px}
+      .l{fill:#57606a;font-size:11px}
+      .e{fill:none;stroke:#6e7781;stroke-width:1.6;marker-end:url(#a)}
+      .d{stroke-dasharray:4 4}
+    </style>
+  </defs>
+  <rect width="880" height="400" rx="12" fill="#fafbfc"/>
+
+  <!-- zones -->
+  <rect x="170" y="26" width="690" height="236" rx="10" class="zone"/>
+  <text x="182" y="46" class="s">Raspberry Pi · docker compose</text>
+  <rect x="410" y="290" width="450" height="92" rx="10" class="zone"/>
+  <text x="850" y="376" text-anchor="end" class="s">USB drive · BASE_DIR</text>
+
+  <!-- internet -->
+  <rect x="20" y="96" width="126" height="68" rx="34" class="box"/>
+  <text x="83" y="124" text-anchor="middle" class="t">Internet</text>
+  <text x="83" y="142" text-anchor="middle" class="s">indexers · TMDB · Trakt</text>
+  <text x="83" y="155" text-anchor="middle" class="s">OpenSubtitles</text>
+
+  <!-- acquire pipeline -->
+  <rect x="200" y="100" width="120" height="60" rx="8" class="svc"/>
+  <text x="260" y="124" text-anchor="middle" class="t" font-weight="600">Scarf</text>
+  <text x="260" y="142" text-anchor="middle" class="s">indexer proxy · :8080</text>
+
+  <rect x="380" y="100" width="120" height="60" rx="8" class="svc"/>
+  <text x="440" y="124" text-anchor="middle" class="t" font-weight="600">Reel</text>
+  <text x="440" y="142" text-anchor="middle" class="s">automator · :8081</text>
+
+  <rect x="560" y="100" width="120" height="60" rx="8" class="svc"/>
+  <text x="620" y="124" text-anchor="middle" class="t" font-weight="600">Tango</text>
+  <text x="620" y="142" text-anchor="middle" class="s">aria2c wrapper · :7246</text>
+
+  <!-- readers -->
+  <g class="t">
+    <rect x="740" y="60" width="104" height="36" rx="8" class="rd"/>
+    <text x="792" y="83" text-anchor="middle" font-weight="600">RMS <tspan class="s" font-weight="400">video</tspan></text>
+    <rect x="740" y="106" width="104" height="36" rx="8" class="rd"/>
+    <text x="792" y="129" text-anchor="middle" font-weight="600">Kaze <tspan class="s" font-weight="400">music</tspan></text>
+    <rect x="740" y="152" width="104" height="36" rx="8" class="rd"/>
+    <text x="792" y="175" text-anchor="middle" font-weight="600">Suika <tspan class="s" font-weight="400">manga</tspan></text>
+    <rect x="740" y="198" width="104" height="36" rx="8" class="rd"/>
+    <text x="792" y="221" text-anchor="middle" font-weight="600">Sumi <tspan class="s" font-weight="400">epub</tspan></text>
+  </g>
+  <text x="792" y="250" text-anchor="middle" class="s">:8096 · :4533 · :8083 · :8085</text>
+
+  <!-- storage -->
+  <rect x="470" y="324" width="150" height="44" rx="8" class="box"/>
+  <text x="545" y="351" text-anchor="middle" class="t" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="12">Downloads/</text>
+  <rect x="690" y="324" width="150" height="44" rx="8" class="box"/>
+  <text x="765" y="351" text-anchor="middle" class="t" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="12">Completed/</text>
+
+  <!-- edges -->
+  <path d="M146 122 L200 122" class="e"/>
+  <text x="173" y="114" text-anchor="middle" class="l">search</text>
+  <path d="M146 150 C 230 200, 320 190, 420 162" class="e"/>
+  <text x="300" y="196" text-anchor="middle" class="l">metadata · posters · subtitles</text>
+
+  <path d="M320 130 L380 130" class="e"/>
+  <text x="350" y="122" text-anchor="middle" class="l">Torznab</text>
+  <path d="M500 130 L560 130" class="e"/>
+  <text x="530" y="122" text-anchor="middle" class="l">aria2 RPC</text>
+
+  <path d="M620 160 L620 240 Q620 250 610 250 L560 250 Q545 250 545 265 L545 324" class="e"/>
+  <text x="590" y="244" text-anchor="middle" class="l">downloads</text>
+
+  <path d="M620 346 L690 346" class="e"/>
+  <text x="655" y="338" text-anchor="middle" class="l">hardlink</text>
+  <path d="M440 160 L440 336 Q440 346 450 346 L470 346" class="e d"/>
+  <text x="430" y="300" text-anchor="end" class="l">Reel watches,</text>
+  <text x="430" y="314" text-anchor="end" class="l">renames &amp; enriches</text>
+
+  <path d="M765 324 L765 246" class="e"/>
+  <text x="776" y="290" class="l">read-only</text>
+</svg>

@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="256" height="256" role="img" aria-label="MangoStack logo">
+  <defs>
+    <linearGradient id="ripe" x1="0.35" y1="0" x2="0.65" y2="1">
+      <stop offset="0"    stop-color="#C62828"/>
+      <stop offset="0.28" stop-color="#F4511E"/>
+      <stop offset="0.6"  stop-color="#FFA000"/>
+      <stop offset="1"    stop-color="#FFD54F"/>
+    </linearGradient>
+    <radialGradient id="greenTip" cx="0.3" cy="0.08" r="0.3">
+      <stop offset="0" stop-color="#7CB342" stop-opacity="0.85"/>
+      <stop offset="1" stop-color="#7CB342" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="leaf" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#8BC34A"/>
+      <stop offset="1" stop-color="#2E7D32"/>
+    </linearGradient>
+  </defs>
+
+  <!-- fruit drawn upright (stem at top), then tilted -->
+  <g transform="rotate(-32 128 138)">
+    <path id="body" d="M118 46
+      C 154 42, 196 80, 198 136
+      C 200 182, 180 220, 150 232
+      C 136 238, 120 230, 108 216
+      C 76 184, 54 140, 66 92
+      C 74 62, 94 48, 118 46 Z" fill="url(#ripe)"/>
+    <path d="M118 46 C 154 42, 196 80, 198 136 C 200 182, 180 220, 150 232 C 136 238, 120 230, 108 216 C 76 184, 54 140, 66 92 C 74 62, 94 48, 118 46 Z" fill="url(#greenTip)"/>
+    <!-- soft sheen along the back -->
+    <path d="M82 92 C 70 126, 78 170, 104 204" fill="none" stroke="#FFFFFF" stroke-opacity="0.35" stroke-width="10" stroke-linecap="round"/>
+  </g>
+
+  <!-- stack mark: upright, centred on the fruit (cx 138, cy 150) -->
+  <g transform="translate(-12 -14)" fill="none" stroke="#FFFFFF" stroke-width="6.5" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M112 136 L138 124 L164 136 L138 148 Z" fill="#FFFFFF" fill-opacity="0.18"/>
+    <path d="M112 152 L138 164 L164 152"/>
+    <path d="M112 168 L138 180 L164 168"/>
+  </g>
+
+  <!-- stem + leaf at the shoulder (shoulder after rotation sits near 96,70) -->
+  <path d="M100 74 C 94 64, 92 54, 96 42" fill="none" stroke="#5D4037" stroke-width="7" stroke-linecap="round"/>
+  <path d="M98 48 C 122 14, 184 6, 232 30 C 196 50, 140 58, 98 48 Z" fill="url(#leaf)"/>
+  <path d="M104 47 C 146 34, 190 28, 224 32" fill="none" stroke="#1B5E20" stroke-opacity="0.5" stroke-width="2.5" stroke-linecap="round"/>
+</svg>

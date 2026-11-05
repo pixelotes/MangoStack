@@ -14,13 +14,15 @@ app:
   search_timeout: 60
   filter_log_level: "detail"
 
-# Talks to the Tango service on the internal Docker network.
+# Talks to the aria2c inside the Tango container over JSON-RPC on the internal
+# Docker network (Tango's REST API has no Reel client yet). The secret must
+# match aria2.rpc_secret in tango/config.yaml — bootstrap.sh fills both.
 torrent_client:
-  type: "storm"
-  host: "http://tango:7246"
+  type: "aria2"
+  host: "http://tango:6800/jsonrpc"
   username: ""
   password: ""
-  secret: ""
+  secret: "REPLACE_WITH_LONG_RANDOM_STRING"
   download_path: "/storage/Downloads/complete"
 
 notifications:

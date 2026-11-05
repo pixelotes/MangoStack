@@ -10,7 +10,12 @@ webui_enabled: true
 
 aria2:
   rpc_url: "http://127.0.0.1:6800/jsonrpc"
-  rpc_secret: ""
+  # Reel drives aria2c directly over this JSON-RPC endpoint, so it is bound
+  # on all interfaces of the container (only reachable on the Docker network)
+  # and protected with a secret. Keep in sync with torrent_client.secret in
+  # reel/config.yml — bootstrap.sh fills both.
+  rpc_secret: "REPLACE_WITH_LONG_RANDOM_STRING"
+  rpc_listen_all: true
   bin_path: "/usr/bin/aria2c"
   listen_port: 6881
   max_concurrent: 3

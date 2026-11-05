@@ -8,10 +8,10 @@
 tango/session/
 tango/data/
 reel/data/
-rms/config/*
-!rms/config/config.yml
-suika/config/*
-!suika/config/config.yml
+rms/*
+!rms/config.yml
+suika/*
+!suika/config.yml
 kaze/*
 !kaze/config.yml
 sumi/*

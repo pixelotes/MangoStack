@@ -1,9 +1,33 @@
-# 🥭 MangoStack
+<p align="center">
+  <img src="assets/mango.svg" width="160" alt="MangoStack logo">
+</p>
+
+<h1 align="center">MangoStack</h1>
+
+<p align="center">
+  A self-hosted media stack that fits on a Raspberry Pi.<br>
+  Eight tiny single-purpose services, one <code>docker-compose.yaml</code>.
+</p>
+
+<p align="center">
+  <a href="LICENSE"><img alt="MIT" src="https://img.shields.io/badge/license-MIT-green.svg"></a>
+  <img alt="arm64" src="https://img.shields.io/badge/arch-arm64-blue.svg">
+  <img alt="RAM" src="https://img.shields.io/badge/idle%20RSS-~100%20MiB-orange.svg">
+</p>
 
 A self-hosted media stack for a Raspberry Pi (ARM64), built almost entirely
 from a family of small, single-purpose services I wrote myself. MangoStack is
 just the glue: a `docker-compose.yaml` that wires those services together
 plus a tiny homepage.
+
+## How it fits together
+
+<p align="center"><img src="assets/architecture.svg" width="880" alt="How the services fit together"></p>
+
+Reel asks Scarf for releases, hands the magnet to the aria2c inside Tango,
+waits for it under `Downloads/`, then renames, enriches and hardlinks the
+result into `Completed/`, where the four readers pick it up. Dashboarr (not
+drawn) is a static homepage with a tile per service.
 
 If you have ever looked at the *arr stack and thought "this is too much for
 my Pi", MangoStack is the lightweight alternative I run on mine.
@@ -83,6 +107,7 @@ Nothing in MangoStack is hard-wired to the bundled services:
 ├── kaze/                 # Kaze config (config.yml is tracked, rest ignored)
 ├── sumi/                 # Sumi config (config.yml is tracked, rest ignored)
 ├── scarf/                # Scarf indexer definitions + (runtime) data
+├── assets/               # logo + architecture diagram (SVG)
 └── README.md
 ```
 
@@ -98,6 +123,10 @@ covered by [`.gitignore`](.gitignore). Only the bulk media library
   `compose` plugin.
 - A place to put media. The defaults assume a USB drive mounted at
   `/media/usb`, but any path works — adjust `.env` accordingly.
+- Memory cgroups enabled, so the per-container memory limits in
+  `docker-compose.yaml` take effect. On Raspberry Pi OS add
+  `cgroup_enable=memory cgroup_memory=1` to `/boot/firmware/cmdline.txt`
+  and reboot.
 
 ## Quick start
 
@@ -128,9 +157,10 @@ cp .env.example .env
 $EDITOR .env                            # paths, secrets, COMPOSE_PROFILES
 
 # Fill in everything marked REPLACE_WITH_... in the per-service configs
-$EDITOR reel/config/config.yml
-$EDITOR rms/config/config.yml
-$EDITOR suika/config/config.yml
+$EDITOR tango/config.yaml                # rpc_secret
+$EDITOR reel/config.yml                  # same secret, SCARF_API_KEY, API keys
+$EDITOR rms/config.yml
+$EDITOR suika/config.yml
 
 # Optional: customise the homepage tiles
 $EDITOR dashboarr/services.json
@@ -148,13 +178,13 @@ copy step.
 
 | Service   | Config file                              | Notes |
 |-----------|------------------------------------------|-------|
-| Tango     | [`tango/config.yaml`](tango/config.yaml) | tuned for Raspberry Pi 3B |
-| Reel      | [`reel/config/config.yml`](reel/config/config.yml) | needs TMDB, Trakt, Scarf, OpenSubtitles keys |
-| RMS       | [`rms/config/config.yml`](rms/config/config.yml)   | needs TMDB and OpenSubtitles keys |
-| Suika     | [`suika/config/config.yml`](suika/config/config.yml) | just UI password + JWT |
+| Tango     | [`tango/config.yaml`](tango/config.yaml) | tuned for Raspberry Pi 3B; exposes aria2's JSON-RPC to Reel on the Docker network, guarded by `rpc_secret` |
+| Reel      | [`reel/config.yml`](reel/config.yml) | drives Tango's aria2c over JSON-RPC (`torrent_client.secret` = Tango's `rpc_secret`); needs TMDB, Trakt, OpenSubtitles keys and `SCARF_API_KEY` |
+| RMS       | [`rms/config.yml`](rms/config.yml)   | needs TMDB and OpenSubtitles keys |
+| Suika     | [`suika/config.yml`](suika/config.yml) | just UI password + JWT |
 | Kaze      | [`kaze/config.yml`](kaze/config.yml) | just UI password + JWT |
 | Sumi      | [`sumi/config.yml`](sumi/config.yml) | just UI password + JWT |
-| Scarf     | [`scarf/definitions/`](scarf/definitions) | 4 example indexer definitions; Scarf's other settings come from environment variables in `docker-compose.yaml` |
+| Scarf     | [`scarf/definitions/`](scarf/definitions) | 4 example indexer definitions, all shipped with `enabled: "false"` — turn on the ones you want from the Scarf UI or by editing the file; password, JWT and the Torznab API key (`SCARF_API_KEY`, shared with Reel) come from `.env` |
 | Dashboarr | [`dashboarr/services.json`](dashboarr/services.json) | edit hostname and Trakt links |
 
 For deeper tuning, refer to the upstream documentation:
