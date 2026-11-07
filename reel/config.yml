@@ -30,7 +30,7 @@ notifications:
     api_key: "REPLACE_WITH_PUSHBULLET_TOKEN_OR_LEAVE_EMPTY"
 
 metadata:
-  providers: ["tmdb"]
+  providers: ["tmdb", "imdb"]
   timeout: 10
   language: "en"
   tmdb:
@@ -44,7 +44,9 @@ metadata:
     api_key: ""
 
 movies:
-  providers: ["tmdb"]
+  # tmdb needs metadata.tmdb.api_key; imdb is keyless and is used when tmdb
+  # is unavailable or finds nothing.
+  providers: ["tmdb", "imdb"]
   download_folder: "/storage/Downloads/Movies"
   destination_folder: "/storage/Completed/Movies"
   move_method: ["hardlink", "symlink", "move", "copy"]
