@@ -22,21 +22,21 @@ libraries:
     download_metadata: true
     download_subtitles: true
     content_type: anime
-    providers: ["kitsu", "anilist", "tmdb"]
+    providers: ["tvmaze", "anilist", "kitsu"]   # tvmaze: every season, episode titles, IMDb ID
   - friendly_name: "Anime Movies"
     path: "./media/Anime_Movies"
     metadata_lang: en
     download_metadata: true
     download_subtitles: true
     content_type: movies
-    providers: ["kitsu", "anilist", "tmdb"]
+    providers: ["anilist", "kitsu", "tmdb"]   # anime films; tvmaze has no movies
   - friendly_name: "Movies"
     path: "./media/Movies"
     metadata_lang: en
     download_metadata: true
     download_subtitles: true
     content_type: movies
-    providers: ["tmdb", "tvmaze"]
+    providers: ["tmdb", "imdb"]   # imdb is keyless; tvmaze has no movies
   - friendly_name: "Shows"
     path: "./media/TV"
     metadata_lang: en
@@ -70,8 +70,8 @@ crawlers:
     languages: ["en", "es"]
   metadata:
     tmdb_api_key: "REPLACE_WITH_TMDB_API_KEY"
-    anime_providers: ["kitsu", "anilist", "tmdb"]
-    movie_providers: ["tmdb"]
+    anime_providers: ["tvmaze", "anilist", "kitsu"]
+    movie_providers: ["tmdb", "imdb"]
     tvseries_providers: ["tvmaze"]
   # Periodic auto-scan: fills in missing metadata, subtitles and thumbnails.
   auto_scan:
