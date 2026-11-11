@@ -82,6 +82,7 @@ The threat model of every service in this repo assumes a trusted LAN.
 | **Suika**     | Manga reader                       | Komga, Kavita                         | [pixelotes/suika](https://github.com/pixelotes/suika) |
 | **Kaze**      | Minimal Subsonic-compatible music server (filesystem-first, no DB) | Subsonic, Airsonic, Navidrome | [pixelotes/kaze](https://github.com/pixelotes/kaze) |
 | **Sumi**      | Minimal EPUB reader (filesystem-first, no DB; bookmarks in localStorage) | Calibre Web, Kavita | [pixelotes/sumi](https://github.com/pixelotes/sumi) |
+| **Scout**     | Metadata (titles, artwork, episode lists, external IDs from TMDB, IMDb, TVmaze, AniList, Kitsu, Trakt) and OpenSubtitles downloads in one place. A Go library built into the apps, a CLI, and an optional HTTP service so API keys, cache and subtitle quota can be shared. Reel uses it; RMS is next | Bazarr, the metadata agents built into Jellyfin/Plex | [pixelotes/scout](https://github.com/pixelotes/scout) |
 | **Parasol**   | Optional. Browserless Cloudflare challenge solver for Scarf's protected indexers; speaks FlareSolverr's API and caches the clearance cookie per site | FlareSolverr, Byparr | [pixelotes/parasol](https://github.com/pixelotes/parasol) |
 
 ### Mix and match
@@ -97,6 +98,12 @@ Nothing in MangoStack is hard-wired to the bundled services:
 - Don't need a piece? Comment its block out in `docker-compose.yaml` — the
   rest of the stack keeps running. Common cuts: drop **Kaze** if you
   don't stream music, drop **Suika** if you don't read manga.
+- **Scout** needs no container of its own: Reel ships it built in
+  (`crawlers.backends: ["local"]`, the default). Running it as a separate
+  service (`["service", "local"]`) lets the apps share one set of API keys,
+  one cache and one OpenSubtitles quota, with the built-in copy as the
+  fallback when the service is down. The service is not in
+  `docker-compose.yaml` yet.
 - **Parasol** is off by default. A few public indexers (EZTV, Uindex,
   Tokyo Toshokan, BTdirectory) sit behind Cloudflare challenges; enable the
   `parasol` profile and set `FLARESOLVERR_URL=http://parasol:8191` to reach
@@ -208,6 +215,7 @@ For deeper tuning, refer to the upstream documentation:
 - Suika  → <https://github.com/pixelotes/suika>
 - Kaze   → <https://github.com/pixelotes/kaze>
 - Sumi   → <https://github.com/pixelotes/sumi>
+- Scout → <https://github.com/pixelotes/scout>
 - Parasol → <https://github.com/pixelotes/parasol>
 - Dashboarr → <https://github.com/pixelotes/dashboarr>
 
