@@ -42,6 +42,10 @@
   <text x="620" y="124" text-anchor="middle" class="t" font-weight="600">Tango</text>
   <text x="620" y="142" text-anchor="middle" class="s">aria2c wrapper · :7246</text>
 
+  <rect x="200" y="54" width="120" height="40" rx="8" class="svc"/>
+  <text x="260" y="70" text-anchor="middle" class="t" font-weight="600">Scout</text>
+  <text x="260" y="86" text-anchor="middle" class="s">built in · or :8090</text>
+
   <!-- readers -->
   <g class="t">
     <rect x="740" y="60" width="104" height="36" rx="8" class="rd"/>
@@ -64,8 +68,12 @@
   <!-- edges -->
   <path d="M146 122 L200 122" class="e"/>
   <text x="173" y="114" text-anchor="middle" class="l">search</text>
-  <path d="M146 150 C 230 200, 320 190, 420 162" class="e"/>
-  <text x="300" y="196" text-anchor="middle" class="l">metadata · posters · subtitles</text>
+  <path d="M110 96 C 120 76, 150 74, 200 74" class="e"/>
+  <text x="70" y="62" text-anchor="middle" class="l">metadata · artwork</text>
+  <text x="70" y="75" text-anchor="middle" class="l">subtitles</text>
+  <path d="M320 74 L740 74" class="e"/>
+  <path d="M440 74 L440 100" class="e"/>
+  <text x="530" y="68" text-anchor="middle" class="l">lookups</text>
 
   <path d="M320 130 L380 130" class="e"/>
   <text x="350" y="122" text-anchor="middle" class="l">Torznab</text>

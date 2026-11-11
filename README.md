@@ -26,8 +26,10 @@ plus a tiny homepage.
 
 Reel asks Scarf for releases, hands the magnet to the aria2c inside Tango,
 waits for it under `Downloads/`, then renames, enriches and hardlinks the
-result into `Completed/`, where the four readers pick it up. Dashboarr (not
-drawn) is a static homepage with a tile per service.
+result into `Completed/`, where the four readers pick it up. Metadata,
+artwork and subtitles for both Reel and RMS come through Scout, built into
+each app or running as its own service. Dashboarr (not drawn) is a static homepage with a tile per
+service.
 
 If you have ever looked at the *arr stack and thought "this is too much for
 my Pi", MangoStack is the lightweight alternative I run on mine.
