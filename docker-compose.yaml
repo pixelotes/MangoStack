@@ -5,7 +5,7 @@ services:
   ##############
 
   rms:
-    image: pixelotes/rms:arm64
+    image: pixelotes/rms:latest
     container_name: rms
     profiles: ["rms"]
     restart: unless-stopped
@@ -30,7 +30,7 @@ services:
   ###########
 
   dashboarr:
-    image: pixelotes/dashboarr:arm64
+    image: pixelotes/dashboarr:latest
     container_name: dashboarr
     profiles: ["dashboarr"]
     ports:
@@ -50,7 +50,7 @@ services:
   #################
 
   tango:
-    image: pixelotes/tango:arm64
+    image: pixelotes/tango:latest
     container_name: tango
     profiles: ["tango"]
     restart: unless-stopped
@@ -78,7 +78,7 @@ services:
   #################
 
   scarf:
-    image: pixelotes/scarf:arm64
+    image: pixelotes/scarf:latest
     container_name: scarf
     profiles: ["scarf"]
     ports:
@@ -125,7 +125,7 @@ services:
   # Scarf reaches it at http://parasol:8191; no host port is published.
   # Memory stays at a few MB idle and grows to ~200 MB after its first solves.
   parasol:
-    image: pixelotes/parasol:arm64
+    image: pixelotes/parasol:latest
     container_name: parasol
     profiles: ["parasol"]
     restart: unless-stopped
@@ -143,7 +143,7 @@ services:
   ##################
 
   reel:
-    image: pixelotes/reel:arm64
+    image: pixelotes/reel:latest
     container_name: reel
     profiles: ["reel"]
     restart: unless-stopped
@@ -169,7 +169,7 @@ services:
   ##############
 
   kaze:
-    image: pixelotes/kaze:arm64
+    image: pixelotes/kaze:latest
     container_name: kaze
     profiles: ["kaze"]
     restart: unless-stopped
@@ -198,7 +198,7 @@ services:
   ##############
 
   sumi:
-    image: pixelotes/sumi:arm64
+    image: pixelotes/sumi:latest
     container_name: sumi
     profiles: ["sumi"]
     restart: unless-stopped
@@ -225,7 +225,7 @@ services:
   ##############
 
   suika:
-    image: pixelotes/suika:arm64
+    image: pixelotes/suika:latest
     container_name: suika
     profiles: ["suika"]
     restart: unless-stopped

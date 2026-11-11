@@ -6,7 +6,7 @@
 
 <p align="center">
   A self-hosted media stack that fits on a Raspberry Pi.<br>
-  Eight tiny single-purpose services, one <code>docker-compose.yaml</code>.
+  A family of small single-purpose services, one <code>docker-compose.yaml</code>.
 </p>
 
 <p align="center">
@@ -34,8 +34,10 @@ my Pi", MangoStack is the lightweight alternative I run on mine.
 
 ## Why MangoStack
 
-The whole stack runs comfortably on a Raspberry Pi 3B. Real `docker stats`
-from a live deployment:
+The whole stack runs comfortably on a Raspberry Pi 3B. `docker stats` from a
+live deployment, with the configs shipped in this repo (Scarf with cron jobs
+off and a 32 MB cache, RMS with transcoding off, all services idle; Kaze,
+Sumi and Parasol were not running when this was taken):
 
 ```
 CONTAINER                CPU %   MEM USAGE / LIMIT
@@ -49,7 +51,9 @@ dashboarr                0.00%    1.55 MiB /   8 MiB
                                  ~102 MiB total RSS, idle CPU
 ```
 
-For comparison, a typical Sonarr + Radarr + Prowlarr + Jellyfin install on
+Most services have optional features (caches, background jobs, web UIs,
+transcoding) that change these numbers; each app's README says which. For
+comparison, a typical Sonarr + Radarr + Prowlarr + Jellyfin install on
 the same hardware easily uses an order of magnitude more memory and is
 noticeably slower at every interaction.
 
@@ -73,7 +77,7 @@ The threat model of every service in this repo assumes a trusted LAN.
 | **Dashboarr** | Static homepage with service tiles | Homepage, Homarr, Heimdall            | [pixelotes/dashboarr](https://github.com/pixelotes/dashboarr); link list lives in [`./dashboarr/services.json`](dashboarr/services.json) |
 | **Tango**     | Web UI and friendlier REST API around `aria2c`; adds automatic tracker injection and per-torrent download paths on top of aria2's JSON-RPC endpoint — very small footprint | qBittorrent, Transmission, Deluge | [pixelotes/tango](https://github.com/pixelotes/tango) |
 | **Scarf**     | Indexer proxy / aggregator         | Prowlarr, Jackett                     | [pixelotes/scarf](https://github.com/pixelotes/scarf) |
-| **Reel**      | Movie & TV automator with a configurable post-download pipeline (metadata, posters, subtitles, renaming…) | Sonarr + Radarr + Lidarr + Readarr, Flexget | [pixelotes/reel](https://github.com/pixelotes/reel) |
+| **Reel**      | Movie & TV automator with a configurable post-download pipeline (metadata, posters, subtitles, renaming…) | Sonarr + Radarr, Flexget | [pixelotes/reel](https://github.com/pixelotes/reel) |
 | **RMS**       | Raspberry Media Server — lightweight media server with built-in subtitle support; ships its own web client and speaks enough of the Jellyfin API to be used from the official [Jellyfin clients](https://jellyfin.org/clients/), [Streamyfin](https://streamyfin.app/) or the [Jellyfin for Kodi](https://github.com/jellyfin/jellyfin-kodi) plugin | Jellyfin, Emby, Plex | [pixelotes/rms](https://github.com/pixelotes/rms) |
 | **Suika**     | Manga reader                       | Komga, Kavita                         | [pixelotes/suika](https://github.com/pixelotes/suika) |
 | **Kaze**      | Minimal Subsonic-compatible music server (filesystem-first, no DB) | Subsonic, Airsonic, Navidrome | [pixelotes/kaze](https://github.com/pixelotes/kaze) |
@@ -115,6 +119,8 @@ Nothing in MangoStack is hard-wired to the bundled services:
 ├── sumi/                 # Sumi config (config.yml is tracked, rest ignored)
 ├── scarf/                # Scarf indexer definitions + (runtime) data
 ├── assets/               # logo + architecture diagram (SVG)
+├── docs/                 # extra notes
+├── bootstrap.sh          # interactive setup wizard
 └── README.md
 ```
 
@@ -138,7 +144,7 @@ covered by [`.gitignore`](.gitignore). Only the bulk media library
 ## Quick start
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/MangoStack.git
+git clone https://github.com/pixelotes/MangoStack.git
 cd MangoStack
 
 # Interactive setup: prompts for password, paths, languages and which
@@ -202,6 +208,8 @@ For deeper tuning, refer to the upstream documentation:
 - Suika  → <https://github.com/pixelotes/suika>
 - Kaze   → <https://github.com/pixelotes/kaze>
 - Sumi   → <https://github.com/pixelotes/sumi>
+- Parasol → <https://github.com/pixelotes/parasol>
+- Dashboarr → <https://github.com/pixelotes/dashboarr>
 
 ## License
 
